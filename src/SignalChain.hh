@@ -77,7 +77,7 @@ namespace gtkmail {
     protected:        
         void exec_write();
 
-        SigC::Connection m_con;
+        sigc::connection m_con;
         Glib::Thread* m_thread;
         bool m_complete;
         bool m_threw;

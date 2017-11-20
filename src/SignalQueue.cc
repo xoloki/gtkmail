@@ -132,7 +132,7 @@ namespace gtkmail {
     void SignalQueue::init() {
         Gtk::Main::timeout.connect(SigC::slot(this,&gtkmail::SignalQueue::gtk_timeout), 10);
     }
-    void SignalQueue::add(std::string name, u_int pri, SigC::Slot1<SignalChainBase*,action> slot) {
+    void SignalQueue::add(std::string name, u_int pri, sigc::slot1<SignalChainBase*,action> slot) {
         std::queue<action> buf;
         m_pri.insert(std::make_pair(pri,name));
         m_slt.insert(std::make_pair(name,slot));

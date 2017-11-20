@@ -131,9 +131,9 @@ namespace gtkmail {
 
         MailBoxPreflet* mbp = dynamic_cast<MailBoxPreflet*>(p);
         if(mbp) {
-            mbp->signal_new.connect(signal_new.slot());
-            mbp->signal_edited.connect(signal_edited.slot());
-            mbp->signal_deleted.connect(signal_deleted.slot());
+            mbp->signal_new.connect(signal_new.make_slot());
+            mbp->signal_edited.connect(signal_edited.make_slot());
+            mbp->signal_deleted.connect(signal_deleted.make_slot());
         }
     }
     

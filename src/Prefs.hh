@@ -38,12 +38,12 @@ namespace gtkmail {
         Prefs();
         virtual ~Prefs();
 
-        SigC::Signal0<void> signal_apply;
-        SigC::Signal0<void> signal_cancel;
+        sigc::signal0<void> signal_apply;
+        sigc::signal0<void> signal_cancel;
 
-        SigC::Signal1<void,Config::MailBox> signal_new;
-        SigC::Signal1<void,Config::MailBox> signal_edited;
-        SigC::Signal1<void,Config::MailBox> signal_deleted;
+        sigc::signal1<void,Config::MailBox> signal_new;
+        sigc::signal1<void,Config::MailBox> signal_edited;
+        sigc::signal1<void,Config::MailBox> signal_deleted;
 
     protected:
         void on_apply();

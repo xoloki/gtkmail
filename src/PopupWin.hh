@@ -51,7 +51,7 @@ namespace gtkmail {
         
         Gtk::VBox vbox;
         
-        SigC::Connection timeCon;
+        sigc::connection timeCon;
         
         Gtk::Button okButton;
         Gtk::Button caButton;

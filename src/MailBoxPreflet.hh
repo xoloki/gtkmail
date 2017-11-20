@@ -101,9 +101,9 @@ namespace gtkmail {
         
         virtual Gtk::Widget* get_icon();
 
-        SigC::Signal1<void,Config::MailBox> signal_new;
-        SigC::Signal1<void,Config::MailBox> signal_edited;
-        SigC::Signal1<void,Config::MailBox> signal_deleted;
+        sigc::signal1<void,Config::MailBox> signal_new;
+        sigc::signal1<void,Config::MailBox> signal_edited;
+        sigc::signal1<void,Config::MailBox> signal_deleted;
 
     protected:
         void on_new();

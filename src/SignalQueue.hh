@@ -102,7 +102,7 @@ namespace gtkmail {
 
         void init();
 
-        void add(std::string name, u_int pri, SigC::Slot1<SignalChainBase*,action> slot);
+        void add(std::string name, u_int pri, sigc::slot1<SignalChainBase*,action> slot);
         void timeout();
         int gtk_timeout();
         bool preempt(std::string s, std::string t);
@@ -116,7 +116,7 @@ namespace gtkmail {
     protected:
         std::multimap< u_int, std::string > m_pri;
         std::map< std::string, std::queue<action> > m_rep;
-        std::map< std::string, SigC::Slot1< SignalChainBase*,action > > m_slt;
+        std::map< std::string, sigc::slot1< SignalChainBase*,action > > m_slt;
         action m_cur;
         bool m_preempt;
     };
