@@ -1,0 +1,8 @@
+1.1.0
+	Remote mailboxes.
+	SSL commications.
+	PGP (gnupg) support.
+	Automatic reverse DNS/whois spam lookups and forwarding.
+	
+1.0.0
+	Mail fetching

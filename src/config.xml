@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<gtkmail>
+    <server type="smtp" host="localhost" />
+    <mailbox name="local mbox" addr="foo@myisp.net" time="60000">mbox:///</mailbox>
+</gtkmail>

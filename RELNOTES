@@ -1,0 +1,14 @@
+Release Notes for gtkmail-1.1.0
+===============================
+This is a fully functional release.  It supports both local (mbox) and
+remote (imap) mailboxes. Imap can be done either through raw TCP or SSL,
+given server support.  PGP crypto is available through gnupg.
+
+There is also an automagic spam forwarding feature.  If possible, it
+tries to find out where the spam came from and writes a complaint
+letter to the spammer's ISP.  It works sometimes, but given the nature
+of email a clever spammer can always hide his origin.
+
+The UI features simultaneous access to multiple mailboxes, and is massively 
+multithreaded.  Actions within a mailbox are both prioritized and queued.
+

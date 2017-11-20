@@ -1,0 +1,98 @@
+/* -*- mode: C++ c-basic-offset: 4  -*-
+ * MailView.hh - header file for class MailView
+ * Copyright (c) 2003 Joe Yandle <jwy@divisionbyzero.com>
+ *
+ * class MailView provide both a text-based and an html-based view 
+ * of a jlib::net::Email data object.  It can switch between the two at
+ * will, or only use one (in case you don't even want html mail running).
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * 
+ */
+
+#ifndef GTKMAIL_MAILVIEW_HH
+#define GTKMAIL_MAILVIEW_HH
+
+#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/label.h>
+#include <gtkmm/image.h>
+#include <gtkmm/box.h>
+#include <gtkmm/textview.h>
+#include <gtkmm/fontselection.h>
+#include <gtkmm/fileselection.h>
+
+#include <jlib/net/Email.hh>
+
+#include <webkit/webkitwebsettings.h>
+
+namespace gtkmail {
+    
+    class MailView : public Gtk::ScrolledWindow {
+    public:
+        class exception : public std::exception {
+        public:
+            exception(std::string msg = "") {
+                m_msg = "gtkmail::MailView::exception" + ((msg != "") ? (": "+msg) : "");
+            }
+            virtual ~exception() throw() {}
+            virtual const char* what() const throw() { return m_msg.c_str(); }
+        protected:
+            std::string m_msg;
+        };
+
+        MailView();
+
+        void set_data(jlib::net::Email data);
+        void clear();
+
+        void refresh();
+
+        static Glib::ustring get_header(jlib::net::Email data, std::string header);
+        static Glib::ustring get_data(jlib::net::Email data);
+        static Glib::ustring get(std::string data, std::string charset="");
+        static std::string unget(std::string data, std::string charset="");
+
+        static Gtk::Widget* wrap_html(jlib::net::Email data, std::string from);
+        static Gtk::Widget* wrap_html(std::string data, std::string from);
+
+        static std::string get_trim_ctype(const jlib::net::Email& e);
+        static std::string get_ctype_desc(std::string ctype);
+
+    private:
+        void set_data(jlib::net::Email data, int level);
+        void set_data_text(jlib::net::Email data, int level);
+
+        void print_headers_text(jlib::net::Email data);
+
+        void print_ctype_text(jlib::net::Email data);
+
+        void append_widget_text(Gtk::Widget* w, bool endl = true);
+        void append_separator_text();
+
+        void on_show_clicked(Gtk::Image* image, Gtk::Widget* child);
+        void on_save_clicked(jlib::net::Email data);
+        void on_save(Gtk::FileSelection* file, jlib::net::Email data);
+
+        void on_html_view_show(Gtk::Widget* w);
+
+        Gtk::TextView* create_text_view(std::string data);
+
+        Gtk::VBox* m_box;
+        jlib::net::Email m_data;
+    };
+    
+}
+
+#endif //GTKMAIL_MAILVIEW_HH

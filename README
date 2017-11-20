@@ -1,0 +1,78 @@
+README for gtkmail-1.1.2
+------------------------
+gtkmail is a GUI mail client for GNOME.
+
+
+REQUIREMENTS
+------------
+1. gcc-3.0         <http://gcc.gnu.org>
+2. libsigc++-1.0.3 <http://libsigc.sourceforge.net>
+3. openssl         <http://www.openssl.org>
+3. jlib-1.1.1      <http://jlib.sourceforge.net>
+4. gtk+-1.2.8      <http://www.gtk.org>
+5. gdk-pixbuf      <http://www.gnome.org>
+6. gtkmm-1.2.7     <http://gtkmm.sourceforge.net>
+7. gnomemm-1.2.1   <http://gtkmm.sourceforge.net>
+
+
+INSTALLATION
+------------
+See the file INSTALL for details.
+
+
+CONFIGURATION
+-------------
+Copy the sample.config.xml to 
+	
+	$HOME/.gtkmail/config.xml
+
+Be sure you set up at least one mailbox; the examples should be sufficient
+
+If you don't do this, gtkmail will create a simple config.xml for you.  It will try
+to load an mbox style mailbox from $HOME/mail.
+
+To use the address book, copy the sample.address.xml to 
+
+    $HOME/.gtkmail/address.xml
+
+For now, addresses must be inserted manually into this file.  
+
+Other configuration options can be specified.  See sample.config.xml for examples.
+
+
+EXECUTION
+---------
+When gtkmail starts up, it will try to get folder listings for all mailboxes in
+your config.xml.  Once this happens, click on a folder to get email listings.
+Double click on a message to view it.
+
+All messages are opened in their own top level windows.  This was a specific choice
+I made.  DON'T email me and ask me to add a viewing frame into the main window.
+
+All mailboxes operate completely independently of each other.  Within a mailbox,
+actions are prioritized and queued.  Viewing and saving have the highest priority, 
+then (un)deletion, then expunging, then checking.
+
+Mailboxes can be configured from the Settings menu using a Druid.  Thanks GNOME.
+
+If you want to use PGP support, you need to have gpg installed. 
+
+To activate the address book, type <enter> while entering addresses on the To: or Cc: 
+lines.
+
+
+LICENSE
+-------
+This program is distributed under the GPL.  See the file COPYING
+for details.
+
+
+CONTACT
+-------
+Copyright (c) 2000 Joe Yandle <jwy@divisionbyzero.com>
+
+gtkmail homepage:	
+
+	http://gtkmail.sourceforge.net/
+
+	

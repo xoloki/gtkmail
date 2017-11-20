@@ -1,0 +1,41 @@
+INSTALLATION for gtkmail-1.1.2
+==============================
+
+Unles gcc-3.0 is your system compiler, installation is going to be tricky.  You
+will have to (re)compile a lot of stuff by hand.  You have been warned.
+
+gcc-3 IS NOT my system compiler
+-------------------------------
+1. Install gcc-3.0.  We need gcc-3 because none of the previous gcc releases
+   was anywhere close to supporting ISO C++, and I'm using a lot of it.  Ugh.
+
+2. Check to see if you have libsigc++ installed (it comes with recent gnome
+   installations).  If so, first get rid of it (if it's a binary package, simply
+   uninstall, OW you'll have to clean it out by hand).  Then compile it from souce
+   so it's linked against the gcc-3 libstdc++.
+
+3. Check for openssl.  Most Linux/BSDs come with it.  If you already have it,
+   you DONT need to recompile.  If you don't, get it.
+
+4. Install jlib.
+
+5. Check for gtk+ and gdk-pixbuf. They (usually) come with gnome.  Same rules 
+   as for openssl.
+
+6. Check for gtkmm and gnomemm.  Same rules as for #2.
+
+7. Install gtkmail: ./configure, make, make install.
+
+
+gcc-3 IS my system compiler
+---------------------------
+1. Check for libsigc++, openssl, gtk+, gdk-pixbuf, gtkmm, and gnomemm.  Install it if you 
+   don't have it.  If you have it, leave it alone.
+
+2. Install jlib and gtkmail: ./configure, make, make install.
+
+NOTE TO REDHAT USERS
+--------------------
+RedHat doesn't include /usr/local/lib by default in /etc/ld.so.conf, so if you
+install jlib to /usr/local you won't be able to find it at runtime.  Just add
+the line and run ldconfig as root.
