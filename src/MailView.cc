@@ -145,11 +145,21 @@ namespace gtkmail {
                     }
                 }
                 
-                if(html != data.attach().end()) {
-                    set_data_text(*html, level+1);
-                } else if(text != data.attach().end()) {
+                if(text != data.attach().end()) {
                     set_data_text(*text, level+1);
+                } else if(html != data.attach().end()) {
+                    set_data_text(*html, level+1);
                 }
+            }
+            else if(ctype == "multipart/encrypted" && data.attach().size() == 2 && data[0]["Content-Type"] == "application/pgp-encrypted" && data[1]["Content-Type"] == "application/octet-stream") {
+                using namespace jlib::crypt;
+                gpg::ctx ctx;
+                gpg::data::ptr plain = gpg::data::create();
+                bool show = false;
+                
+                gpg::data::ptr cipher = gpg::data::create(data[1].data());
+                gpgme_verify_result_t result = ctx.op_decrypt_verify(cipher, plain);
+                set_data(plain->read(), level+1);
             }
             else {
                 if(level && ctype.find("message/") == 0) {

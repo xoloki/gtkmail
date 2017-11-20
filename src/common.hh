@@ -33,35 +33,35 @@
 #include <jlib/util/xml.hh>
 
 namespace gtkmail {
-
-    namespace config {
+namespace config {
      
-        std::string share();
+std::string share();
 
-        bool has_config_file();
-        bool has_valid_config_file();
+bool has_config_file();
+bool has_valid_config_file();
 
-        bool use_toolbar_text();
+bool use_toolbar_text();
 
 
-        jlib::util::xml::document xml_config();
+jlib::util::xml::document xml_config();
 
-        std::map<std::string,std::string> get_address();
-        std::map<std::string,std::string> get_smtp_server();
+std::map<std::string,std::string> get_address();
+std::map<std::string,std::string> get_smtp_server();
         
-        std::vector<std::string> my_address();
+std::vector<std::string> my_address();
 
-        std::map< std::string, std::map<std::string,std::string> > get_fetch_info();
+std::map< std::string, std::map<std::string,std::string> > get_fetch_info();
 
-        std::map< std::string, std::map<std::string,std::string> > get_mailbox_info();
-        std::map<std::string,std::string> get_mailbox_info(const std::string& box);
-        std::string get_mailbox_info(const std::string& box, const std::string& key);
-        std::vector<std::string> get_mailbox_names();
+std::map< std::string, std::map<std::string,std::string> > get_mailbox_info();
+std::map<std::string,std::string> get_mailbox_info(const std::string& box);
+std::string get_mailbox_info(const std::string& box, const std::string& key);
+std::vector<std::string> get_mailbox_names();
 
-        std::string get_message_font();
-    }
+std::string get_message_font();
 
-    jlib::net::Email decrypt(const jlib::net::Email& email, bool* verify = nullptr);
+}
+
+jlib::net::Email decrypt(const jlib::net::Email& email, bool* verify = nullptr);
     
 }
 
