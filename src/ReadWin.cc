@@ -329,29 +329,26 @@ namespace gtkmail {
                 display_verify_result(result);
             } 
             else if(s == "Decrypt" || s == "VerifyDecrypt") {
-                gpg::data::ptr cipher = gpg::data::create();
                 gpg::data::ptr plain = gpg::data::create();
                 bool show = false;
+		std::string data;
 
-                if(util::begins(m_email["Content-Type"], "multipart/encrypted")) {
-                    // check for two attachments: application/pgp-encrypted then octet data
-                    if(m_email.attach().size() == 2 && m_email[0]["Content-Type"] == "application/pgp-encrypted" && m_email[1]["Content-Type"] == "application/octet-stream") {
-                        std::cout << "Found good multipart encrypted" << std::endl;
-                        cipher->write(m_email[1].data());
-                    } else {
-                        std::cout << "Found bad multipart encrypted" << std::endl;
-                        cipher->write(m_email.data());
-                    }
-                } else {
-                    try {
-                        net::Email::reference r = m_email.grep("BEGIN PGP MESSAGE");
-                        std::cout << "Found text PGP" << std::endl;
-                        cipher->write(r.data());
-                    } catch(net::Email::exception&) {
-                        std::cout << "Found nothing" << std::endl;
-                        cipher->write(m_email.data());
-                    }
-                }
+		if(util::begins(m_email["Content-Type"], "multipart/encrypted")) {
+		    // check for two attachments: application/pgp-encrypted then octet data
+		    if(m_email.attach().size() == 2 && m_email[0]["Content-Type"] == "application/pgp-encrypted" && m_email[1]["Content-Type"] == "application/octet-stream") {
+		        data = m_email[1].data();
+		    } else {
+		        data = m_email.data();
+		    }
+		} else {
+		    try {
+			net::Email::reference r = m_email.grep("BEGIN PGP MESSAGE");
+		        data = r.data();
+		    } catch(net::Email::exception&) {
+		        data = m_email.data();
+		    }
+		}
+                gpg::data::ptr cipher = gpg::data::create(data);
 		
                 if(s == "Decrypt") {
                     ctx.op_decrypt_verify(cipher, plain);
