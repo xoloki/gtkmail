@@ -61,6 +61,8 @@ namespace gtkmail {
         std::string get_message_font();
     }
 
+    jlib::net::Email decrypt(const jlib::net::Email& email, bool* verify = nullptr);
+    
 }
 
 #endif //GTKMAIL_MAINWIN_HH
