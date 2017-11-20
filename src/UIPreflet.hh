@@ -45,13 +45,19 @@ namespace gtkmail {
         void on_font_clicked();
         Gtk::ToolbarStyle get_toolbar_style();
         void set_toolbar_style(Gtk::ToolbarStyle style);
+        std::string get_default_text();
+        void set_default_text(std::string default_text);
         void on_choose();
 
+        static const int TEXT_PLAIN = 0;
+        static const int TEXT_HTML = 1;
+        
         Gtk::OptionMenu* m_toolbar_style;
         Gtk::Entry* m_font;
         Gtk::Entry* m_charset;
         Gtk::Entry* m_user_style;
         Gtk::CheckButton* m_auto_load;
+        Gtk::OptionMenu* m_default_text;
     };
     
 }

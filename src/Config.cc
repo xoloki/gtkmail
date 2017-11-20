@@ -686,6 +686,14 @@ namespace gtkmail {
         set_pref("user_style", s);
     }
 
+    std::string Config::get_default_text() {
+        return get_pref("default_text", "");
+    }
+
+    void Config::set_default_text(std::string s) {
+        set_pref("default_text", s);
+    }
+
     bool Config::get_auto_load() {
         return get_pref("auto_load", "false") == "true";
     }

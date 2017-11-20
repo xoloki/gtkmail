@@ -224,6 +224,9 @@ namespace gtkmail {
         std::string get_user_style();
         void set_user_style(std::string s);
 
+        std::string get_default_text();
+        void set_default_text(std::string s);
+
         bool get_auto_load();
         void set_auto_load(bool b);
 

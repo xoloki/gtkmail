@@ -77,7 +77,7 @@ namespace gtkmail {
                      "user-stylesheet-uri", style.data(),
                      "auto-load-images", auto_load,
                      "enable-private-browsing", TRUE,
-                     "enable-caret-browsing", TRUE,
+                     "enable-caret-browsing", FALSE,
                      "enable-html5-database", FALSE,
                      "enable-html5-local-storage", FALSE,
                      "enable-scripts", FALSE,
@@ -87,6 +87,7 @@ namespace gtkmail {
                      NULL);
         
         webkit_web_view_set_settings(WEBKIT_WEB_VIEW(view), settings);
+        webkit_web_view_set_editable(WEBKIT_WEB_VIEW(view), FALSE);
         webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(view), data.data(), "base uri");
 
         g_object_unref(G_OBJECT(settings));
@@ -144,8 +145,12 @@ namespace gtkmail {
                         text = i;
                     }
                 }
-                
-                if(text != data.attach().end()) {
+
+                if(Config::global.get_default_text() == "text/plain" && text != data.attach().end()) {
+                    set_data_text(*text, level+1);
+                } else if(Config::global.get_default_text() == "text/html" && html != data.attach().end()) {
+                    set_data_text(*html, level+1);
+                } else if(text != data.attach().end()) {
                     set_data_text(*text, level+1);
                 } else if(html != data.attach().end()) {
                     set_data_text(*html, level+1);
@@ -523,6 +528,7 @@ namespace gtkmail {
 
         text->show();
         text->set_editable(FALSE);
+        text->set_wrap_mode(Gtk::WRAP_WORD);
         text->get_buffer()->set_text(data);
 
         return text;

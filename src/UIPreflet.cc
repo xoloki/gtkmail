@@ -42,6 +42,7 @@ namespace gtkmail {
         Gtk::VBox* msg_box = Gtk::manage(new Gtk::VBox(false, 2));
 
         Gtk::HBox* tool_box = Gtk::manage(new Gtk::HBox(false, 10));
+        Gtk::HBox* default_text_box = Gtk::manage(new Gtk::HBox(false, 10));
         Gtk::HBox* font_box = Gtk::manage(new Gtk::HBox(false, 10));
         Gtk::HBox* char_box = Gtk::manage(new Gtk::HBox(false, 10));
         Gtk::HBox* style_box = Gtk::manage(new Gtk::HBox(false, 10));
@@ -50,8 +51,10 @@ namespace gtkmail {
         Gtk::Label* font_label = Gtk::manage(new Gtk::Label("Font:"));
         Gtk::Label* char_label = Gtk::manage(new Gtk::Label("Default charset:"));
         Gtk::Label* style_label = Gtk::manage(new Gtk::Label("User Style:"));
+        Gtk::Label* default_text_label = Gtk::manage(new Gtk::Label("Default text alternate:"));
 
         Gtk::Menu* tool_menu = Gtk::manage(new Gtk::Menu());
+        Gtk::Menu* default_text_menu = Gtk::manage(new Gtk::Menu());
 
         Gtk::Button* font_button = Gtk::manage(new Gtk::Button(Gtk::Stock::SELECT_FONT));
 
@@ -73,12 +76,23 @@ namespace gtkmail {
 
         m_toolbar_style->set_menu(*tool_menu);
 
+        m_default_text = Gtk::manage(new Gtk::OptionMenu());
+        default_text_menu->items().push_back(Gtk::Menu_Helpers::MenuElem("text/plain"));
+        default_text_menu->items().back().property_user_data() = GINT_TO_POINTER(TEXT_PLAIN);
+        default_text_menu->items().push_back(Gtk::Menu_Helpers::MenuElem("text/html"));
+        default_text_menu->items().back().property_user_data() = GINT_TO_POINTER(TEXT_HTML);
+
+        m_default_text->set_menu(*default_text_menu);
+        
         m_user_style = Gtk::manage(new Gtk::Entry());
 
         m_auto_load = Gtk::manage(new Gtk::CheckButton("Auto load images from people in my address book"));
 
         tool_box->pack_start(*tool_label, Gtk::PACK_SHRINK);
         tool_box->pack_start(*m_toolbar_style, Gtk::PACK_SHRINK);
+
+        default_text_box->pack_start(*default_text_label, Gtk::PACK_SHRINK);
+        default_text_box->pack_start(*m_default_text, Gtk::PACK_SHRINK);
 
         font_box->pack_start(*font_label, Gtk::PACK_SHRINK);
         font_box->pack_start(*m_font, Gtk::PACK_SHRINK);
@@ -93,6 +107,7 @@ namespace gtkmail {
         app_box->pack_start(*tool_box, Gtk::PACK_SHRINK);
         msg_box->pack_start(*font_box, Gtk::PACK_SHRINK);
         msg_box->pack_start(*char_box, Gtk::PACK_SHRINK);
+        msg_box->pack_start(*default_text_box, Gtk::PACK_SHRINK);
         msg_box->pack_start(*style_box, Gtk::PACK_SHRINK);
         msg_box->pack_start(*m_auto_load, Gtk::PACK_SHRINK);
 
@@ -117,6 +132,7 @@ namespace gtkmail {
 
     void UIPreflet::load() {
         set_toolbar_style(Config::global.get_toolbar_style());
+        set_default_text(Config::global.get_default_text());
         m_font->set_text(Config::global.get_message_font());
         m_charset->set_text(Config::global.get_default_charset());
 
@@ -128,6 +144,7 @@ namespace gtkmail {
         Config::global.set_message_font(m_font->get_text());
         Config::global.set_default_charset(m_charset->get_text());
         Config::global.set_toolbar_style(get_toolbar_style());
+        Config::global.set_default_text(get_default_text());
 
         Config::global.set_user_style(m_user_style->get_text());
         Config::global.set_auto_load(m_auto_load->get_active());
@@ -164,6 +181,16 @@ namespace gtkmail {
         return static_cast<Gtk::ToolbarStyle>(style);
     }
 
+    std::string UIPreflet::get_default_text() {
+        void* p = m_default_text->get_menu()->get_active()->property_user_data();
+        int alternate = GPOINTER_TO_INT(p);
+        switch(alternate) {
+        case TEXT_PLAIN: return "text/plain";
+        case TEXT_HTML: return "text/html";
+        default: return "text/plain";
+        }
+    }
+
     void UIPreflet::set_toolbar_style(Gtk::ToolbarStyle style) {
         Gtk::Menu* menu = m_toolbar_style->get_menu();
         Gtk::Menu_Helpers::MenuList list = menu->items();
@@ -180,8 +207,28 @@ namespace gtkmail {
                 return;
             }
         }
+    }
+
+    void UIPreflet::set_default_text(std::string default_text) {
+        Gtk::Menu* menu = m_default_text->get_menu();
+        Gtk::Menu_Helpers::MenuList list = menu->items();
+        int text = TEXT_PLAIN;
+
+        if(default_text == "text/html")
+            text = TEXT_HTML;
         
-        
+        Gtk::Menu_Helpers::MenuList::iterator i;
+        int j = 0;
+        for(i = list.begin(); i != list.end(); i++, j++) {
+            void* p = i->property_user_data();
+            int s = GPOINTER_TO_INT(p);
+
+            if(s == text) {
+                menu->select_item(*i);
+                m_default_text->set_history(j);
+                return;
+            }
+        }
     }
 
 }
