@@ -7,6 +7,6 @@ gtkmail_SOURCES = MessageWin.cc Dialog.cc ReadWin.cc MainWin.cc WriteWin.cc \
                   HtmlWin.hh MailBox.hh SignalChain.hh Config.hh  \
                   MailView.hh MailView.cc Preflet.hh Preflet.cc Prefs.hh Prefs.cc \
                   UIPreflet.hh UIPreflet.cc MailBoxPreflet.hh MailBoxPreflet.cc \
-                  AddressBook.hh AddressBook.cc AddressBookPreflet.hh AddressBookPreflet.cc
+                  AddressBook.hh AddressBook.cc AddressBookPreflet.hh AddressBookPreflet.cc URIHandlerMap.hh URIHandlerMap.cc URIHandlerPreflet.hh URIHandlerPreflet.cc
 
 

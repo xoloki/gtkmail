@@ -24,6 +24,7 @@
 #define GTKMAIL_URI_HANDLER_PREFLET_HH
 
 #include "Preflet.hh"
+#include "URIHandlerMap.hh"
 
 #include <gtkmm/dialog.h>
 #include <gtkmm/button.h>
@@ -36,12 +37,14 @@ namespace gtkmail {
 
 class URIHandlerDialog : public Gtk::Dialog {
 public:
-    URIHandlerDialog(std::string uri, std::string handler);
+    URIHandlerDialog(URIHandler handler);
     
     void load();
     void save();
-    
+
 protected:
+    URIHandler m_uri_handler;
+    
     Gtk::Entry* m_uri;
     Gtk::Entry* m_handler;
 };
