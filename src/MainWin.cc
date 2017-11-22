@@ -23,7 +23,7 @@
 #include "WriteWin.hh"
 #include "Config.hh"
 #include "AddressBook.hh"
-#include "URIHandlerMap.hh"
+#include "ProtocolHandlerMap.hh"
 #include "Dialog.hh"
 #include "Prefs.hh"
 //#include "MailBoxDruid.hh"
@@ -649,7 +649,7 @@ namespace gtkmail {
     void MainWin::on_prefs_apply() {
         Config::global.save();
         AddressBook::global.save();
-        URIHandlerMap::global.save();
+        ProtocolHandlerMap::global.save();
 
         //m_tools->set_toolbar_style(Config::global.get_toolbar_style());
 

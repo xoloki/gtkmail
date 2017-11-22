@@ -26,7 +26,7 @@
 #include "UIPreflet.hh"
 #include "MailBoxPreflet.hh"
 #include "AddressBookPreflet.hh"
-#include "URIHandlerPreflet.hh"
+#include "ProtocolHandlerPreflet.hh"
 
 #include <gtkmm/stock.h>
 #include <gtkmm/separator.h>
@@ -76,7 +76,7 @@ namespace gtkmail {
         append(new UIPreflet());
         append(new MailBoxPreflet());
         append(new AddressBookPreflet());
-        append(new URIHandlerPreflet());
+        append(new ProtocolHandlerPreflet());
     }
     
     Prefs::~Prefs() {

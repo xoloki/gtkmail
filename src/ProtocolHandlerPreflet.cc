@@ -20,7 +20,7 @@
  * 
  */
 
-#include "URIHandlerPreflet.hh"
+#include "ProtocolHandlerPreflet.hh"
 
 #include "Dialog.hh"
 
@@ -34,7 +34,7 @@
 
 namespace gtkmail {
 
-URIHandlerDialog::URIHandlerDialog(URIHandler uri_handler)
+ProtocolHandlerDialog::ProtocolHandlerDialog(ProtocolHandler uri_handler)
     : m_uri_handler(uri_handler)
 {
     Gtk::Table* general_table = Gtk::manage(new Gtk::Table(2, 2));
@@ -70,17 +70,17 @@ URIHandlerDialog::URIHandlerDialog(URIHandler uri_handler)
     load();
 }
     
-void URIHandlerDialog::load() {
+void ProtocolHandlerDialog::load() {
     m_uri->set_text(m_uri_handler.get_uri());
     m_handler->set_text(m_uri_handler.get_handler());
 }
 
-void URIHandlerDialog::save() {
+void ProtocolHandlerDialog::save() {
     m_uri_handler.set_uri(m_uri->get_text());
     m_uri_handler.set_handler(m_handler->get_text());
 }
     
-URIHandlerPreflet::URIHandlerPreflet()
+ProtocolHandlerPreflet::ProtocolHandlerPreflet()
 {
     Gtk::ButtonBox* bbox = Gtk::manage(new Gtk::HButtonBox());
 
@@ -120,15 +120,15 @@ URIHandlerPreflet::URIHandlerPreflet()
     pack_start(*win);
     pack_end(*bbox, Gtk::PACK_SHRINK);
 
-    m_new->signal_clicked().connect(sigc::mem_fun(*this, &URIHandlerPreflet::on_new));
-    m_edit->signal_clicked().connect(sigc::mem_fun(*this, &URIHandlerPreflet::on_edit));
-    m_delete->signal_clicked().connect(sigc::mem_fun(*this, &URIHandlerPreflet::on_delete));
+    m_new->signal_clicked().connect(sigc::mem_fun(*this, &ProtocolHandlerPreflet::on_new));
+    m_edit->signal_clicked().connect(sigc::mem_fun(*this, &ProtocolHandlerPreflet::on_edit));
+    m_delete->signal_clicked().connect(sigc::mem_fun(*this, &ProtocolHandlerPreflet::on_delete));
 
     show_all();
 }
     
-void URIHandlerPreflet::load() {
-    for(URIHandlerMap::iterator i = URIHandlerMap::global.begin(); i != URIHandlerMap::global.end(); i++) {
+void ProtocolHandlerPreflet::load() {
+    for(ProtocolHandlerMap::iterator i = ProtocolHandlerMap::global.begin(); i != ProtocolHandlerMap::global.end(); i++) {
         Gtk::TreeModel::iterator j = m_model->append();
         Gtk::TreeModel::Row row = *j;
         
@@ -137,11 +137,11 @@ void URIHandlerPreflet::load() {
     }
 }
 
-void URIHandlerPreflet::save() {
+void ProtocolHandlerPreflet::save() {
     // info is saved in real time
 }
     
-Gtk::Widget* URIHandlerPreflet::get_icon() {
+Gtk::Widget* ProtocolHandlerPreflet::get_icon() {
     Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 0));
     Gtk::Label* label = Gtk::manage(new Gtk::Label("URI"));
     Gtk::Image* image = Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_xpm_data(addressbook_xpm)));
@@ -152,9 +152,9 @@ Gtk::Widget* URIHandlerPreflet::get_icon() {
     return vbox;
 }
     
-void URIHandlerPreflet::on_new() {
-    URIHandler uri_handler;
-    URIHandlerDialog dlg(uri_handler);
+void ProtocolHandlerPreflet::on_new() {
+    ProtocolHandler uri_handler;
+    ProtocolHandlerDialog dlg(uri_handler);
     dlg.set_title("New URI Handler");
     dlg.show_all();
     if(dlg.run() == Gtk::RESPONSE_OK) {
@@ -167,28 +167,28 @@ void URIHandlerPreflet::on_new() {
             row[m_cols.m_uri] = uri_handler.get_uri();
             row[m_cols.m_handler] = uri_handler.get_handler();
             
-            URIHandlerMap::global.insert(uri_handler);
+            ProtocolHandlerMap::global.insert(uri_handler);
 
         } catch(Glib::Exception& e) {
-            display_exception(std::string("Unable to add new URIHandler: ") + e.what(), &dlg);
+            display_exception(std::string("Unable to add new ProtocolHandler: ") + e.what(), &dlg);
         } catch(std::exception& e) {
-            display_exception(std::string("Unable to add new URIHandler: ") + e.what(), &dlg);
+            display_exception(std::string("Unable to add new ProtocolHandler: ") + e.what(), &dlg);
         } catch(...) {
-            display_exception("Unable to add new URIHandler", &dlg);
+            display_exception("Unable to add new ProtocolHandler", &dlg);
         }
     }
 }
 
-void URIHandlerPreflet::on_edit() {
+void ProtocolHandlerPreflet::on_edit() {
     Gtk::TreeModel::iterator j = m_select->get_selected();
     if(!j) return;
     Gtk::TreeModel::Row row = *j;
     
     std::string uri = static_cast<Glib::ustring>(row[m_cols.m_uri]);
-    URIHandlerMap::iterator i = URIHandlerMap::global.find(uri);
-    if(i == URIHandlerMap::global.end()) return;
+    ProtocolHandlerMap::iterator i = ProtocolHandlerMap::global.find(uri);
+    if(i == ProtocolHandlerMap::global.end()) return;
     
-    URIHandlerDialog dlg(i->second);
+    ProtocolHandlerDialog dlg(i->second);
     dlg.set_title("Edit Handleress");
     dlg.show_all();
     if(dlg.run() == Gtk::RESPONSE_OK) {
@@ -199,25 +199,25 @@ void URIHandlerPreflet::on_edit() {
             row[m_cols.m_handler] = i->second.get_handler();
             
         } catch(Glib::Exception& e) {
-            display_exception(std::string("Unable to add new URIHandler: ") + e.what(), &dlg);
+            display_exception(std::string("Unable to add new ProtocolHandler: ") + e.what(), &dlg);
         } catch(std::exception& e) {
-            display_exception(std::string("Unable to add new URIHandler: ") + e.what(), &dlg);
+            display_exception(std::string("Unable to add new ProtocolHandler: ") + e.what(), &dlg);
         } catch(...) {
-            display_exception("Unable to add new URIHandler", &dlg);
+            display_exception("Unable to add new ProtocolHandler", &dlg);
         }
     }
 }
 
-void URIHandlerPreflet::on_delete() {
+void ProtocolHandlerPreflet::on_delete() {
     Gtk::TreeModel::iterator j = m_select->get_selected();
     if(!j) return;
     Gtk::TreeModel::Row row = *j;
     
     std::string uri = static_cast<Glib::ustring>(row[m_cols.m_uri]);
-    URIHandlerMap::iterator i = URIHandlerMap::global.find(uri);
-    if(i == URIHandlerMap::global.end()) return;
+    ProtocolHandlerMap::iterator i = ProtocolHandlerMap::global.find(uri);
+    if(i == ProtocolHandlerMap::global.end()) return;
     
-    URIHandlerMap::global.erase(i);
+    ProtocolHandlerMap::global.erase(i);
     m_model->erase(j);
 }
 

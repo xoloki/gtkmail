@@ -1,5 +1,5 @@
 /* -*- mode:C++ c-basic-offset:4  -*-
- * URIHandlerBook.hh - defines interfaces to addressbook stuff
+ * ProtocolHandlerBook.hh - defines interfaces to addressbook stuff
  * Copyright (c) 1999 Joe Yandle <jwy@divisionbyzero.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -34,11 +34,11 @@ using namespace jlib::util;
 
 namespace gtkmail {
 
-    class URIHandler {
+    class ProtocolHandler {
     public:
-        URIHandler();
-        URIHandler(std::string uri, std::string handler);
-        URIHandler(xml::node::ptr node);
+        ProtocolHandler();
+        ProtocolHandler(std::string uri, std::string handler);
+        ProtocolHandler(xml::node::ptr node);
         
         std::string get_uri() const;
         std::string get_handler() const;
@@ -57,7 +57,7 @@ namespace gtkmail {
     };
 
 
-    class URIHandlerMap : public jlib::sys::Object {
+    class ProtocolHandlerMap : public jlib::sys::Object {
     public:
         class no_charset : public std::exception {
         public:
@@ -80,7 +80,7 @@ namespace gtkmail {
             std::string m_style;
         };
 
-        typedef std::map<std::string, URIHandler> rep_type;
+        typedef std::map<std::string, ProtocolHandler> rep_type;
         typedef rep_type::pointer pointer;
         typedef rep_type::const_pointer const_pointer;
         typedef rep_type::reference reference;
@@ -110,11 +110,11 @@ namespace gtkmail {
         iterator find_handler(std::string handler);
         const_iterator find_handler(std::string handler) const;
 
-        void insert(const URIHandler& handler);
+        void insert(const ProtocolHandler& handler);
         void erase(iterator i);
         void clear();
         
-        URIHandlerMap();
+        ProtocolHandlerMap();
 
         rep_type& get();
         
@@ -124,10 +124,10 @@ namespace gtkmail {
         void load(std::string file);
         void save(std::string file);
 
-        friend std::istream& operator>>(std::istream& i, URIHandlerMap& urihandlermap);
-        friend std::ostream& operator<<(std::ostream& o, const URIHandlerMap& urihandlermap);
+        friend std::istream& operator>>(std::istream& i, ProtocolHandlerMap& urihandlermap);
+        friend std::ostream& operator<<(std::ostream& o, const ProtocolHandlerMap& urihandlermap);
         
-        static URIHandlerMap global;
+        static ProtocolHandlerMap global;
         
         std::string get_gtkmail_dir();
 

@@ -18,7 +18,7 @@
  * 
  */
 
-#include "URIHandlerMap.hh"
+#include "ProtocolHandlerMap.hh"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -33,14 +33,14 @@ const std::string XML_HEADER = "<?xml version=\"1.0\"?>";
 
 namespace gtkmail {
 
-    URIHandlerMap URIHandlerMap::global;
+    ProtocolHandlerMap ProtocolHandlerMap::global;
 
-    URIHandler::URIHandler() 
+    ProtocolHandler::ProtocolHandler() 
     {
         m_node = xml::node::create("uri-handler"); 
     }
 
-    URIHandler::URIHandler(std::string uri, std::string handler)
+    ProtocolHandler::ProtocolHandler(std::string uri, std::string handler)
     {
         m_node = xml::node::create("uri-handler"); 
 
@@ -48,44 +48,44 @@ namespace gtkmail {
         set_handler(handler);
     }
     
-    URIHandler::URIHandler(xml::node::ptr node) 
+    ProtocolHandler::ProtocolHandler(xml::node::ptr node) 
     {
         set_node(node);
     }
     
-    std::string URIHandler::get_uri() const {
+    std::string ProtocolHandler::get_uri() const {
         return m_node->get_attribute("uri");
     }
 
-    std::string URIHandler::get_handler() const {
+    std::string ProtocolHandler::get_handler() const {
         return m_node->get_attribute("handler");
     }
 
-    void URIHandler::set_uri(std::string uri) {
+    void ProtocolHandler::set_uri(std::string uri) {
         m_node->set_attribute("uri", uri);
     }
 
-    void URIHandler::set_handler(std::string s) {
+    void ProtocolHandler::set_handler(std::string s) {
         m_node->set_attribute("handler", s);
     }
 
-    xml::node::ptr URIHandler::get_node() {
+    xml::node::ptr ProtocolHandler::get_node() {
         return m_node;
     }
 
-    const xml::node::ptr URIHandler::get_node() const {
+    const xml::node::ptr ProtocolHandler::get_node() const {
         return m_node;
     }
 
-    void URIHandler::set_node(xml::node::ptr node) {
+    void ProtocolHandler::set_node(xml::node::ptr node) {
         m_node = node;
     }
 
-    std::string URIHandler::get_full() const {
+    std::string ProtocolHandler::get_full() const {
         return (get_uri() + " -> " + get_handler());
     }
     
-    URIHandlerMap::URIHandlerMap() {
+    ProtocolHandlerMap::ProtocolHandlerMap() {
         if(getenv("HOME") != 0) {
             m_file = get_gtkmail_dir()+"/uri-handler-map.xml";
 
@@ -110,33 +110,33 @@ namespace gtkmail {
         
     }
 
-    URIHandlerMap::rep_type& URIHandlerMap::get() {
+    ProtocolHandlerMap::rep_type& ProtocolHandlerMap::get() {
         return m_uri_handlers;
     }
     
-    void URIHandlerMap::load() {
+    void ProtocolHandlerMap::load() {
         load(m_file);
     }
 
-    void URIHandlerMap::save() {
+    void ProtocolHandlerMap::save() {
         save(m_file);
     }
     
-    void URIHandlerMap::load(std::string file) {
+    void ProtocolHandlerMap::load(std::string file) {
         std::ifstream ifs(file.c_str());
         ifs >> *this;
     }
 
-    void URIHandlerMap::save(std::string file) {
+    void ProtocolHandlerMap::save(std::string file) {
         std::ofstream ofs(file.c_str());
         ofs << *this;
     }
 
 
-    void URIHandlerMap::parse_document() {
+    void ProtocolHandlerMap::parse_document() {
         xml::node::list root = m_doc.get_list();
         if(root.size() != 1 || root.front()->get_name() != "uri-handler-map") {
-            std::cerr << "gtkmail::URIHandlerMap::parse_document(): error"<<std::endl;
+            std::cerr << "gtkmail::ProtocolHandlerMap::parse_document(): error"<<std::endl;
             std::cerr << "\troot.size() = "<<root.size()<<std::endl;
             if(root.size() >= 1)
                 std::cerr << "\troot.front()->get_name() = "<< root.front()->get_name() 
@@ -150,23 +150,23 @@ namespace gtkmail {
         for(;i!=toplevel.end();i++) {
             xml::node::ptr node = *i;
             if(node->get_name() == "uri-handler") {
-                URIHandler handler(node);
+                ProtocolHandler handler(node);
                 m_uri_handlers[handler.get_uri()] = handler;
             }
         }
     }
 
-    void URIHandlerMap::clear() { 
+    void ProtocolHandlerMap::clear() { 
         m_uri_handlers.clear(); 
     }
 
-    void URIHandlerMap::insert(const URIHandler& r) {
+    void ProtocolHandlerMap::insert(const ProtocolHandler& r) {
         m_uri_handlers[r.get_uri()] = r;
         xml::node::ptr node = r.get_node();
         m_doc.get_list().front()->add(node);
     }
 
-    void URIHandlerMap::erase(iterator i) {
+    void ProtocolHandlerMap::erase(iterator i) {
         xml::node::list& list = m_doc.get_list().front()->get_list();
         xml::node::list::iterator j = find_iter(i->second.get_uri());
         if(j != list.end()) {
@@ -174,15 +174,15 @@ namespace gtkmail {
         }
     }
     
-    URIHandlerMap::iterator URIHandlerMap::find(std::string uri) {
+    ProtocolHandlerMap::iterator ProtocolHandlerMap::find(std::string uri) {
         return m_uri_handlers.find(uri);
     }
 
-    URIHandlerMap::const_iterator URIHandlerMap::find(std::string uri) const {
+    ProtocolHandlerMap::const_iterator ProtocolHandlerMap::find(std::string uri) const {
         return m_uri_handlers.find(uri);
     }
 
-    URIHandlerMap::iterator URIHandlerMap::find_handler(std::string handler) {
+    ProtocolHandlerMap::iterator ProtocolHandlerMap::find_handler(std::string handler) {
         iterator i = begin();
 
         for(;i!=end();i++) {
@@ -193,7 +193,7 @@ namespace gtkmail {
         return end();
     }
 
-    URIHandlerMap::const_iterator URIHandlerMap::find_handler(std::string handler) const {
+    ProtocolHandlerMap::const_iterator ProtocolHandlerMap::find_handler(std::string handler) const {
         const_iterator i = begin();
 
         for(;i!=end();i++) {
@@ -204,7 +204,7 @@ namespace gtkmail {
         return end();
     }
 
-    xml::node::list::iterator URIHandlerMap::find_iter(std::string uri) {
+    xml::node::list::iterator ProtocolHandlerMap::find_iter(std::string uri) {
         xml::node::list& list = m_doc.get_list().front()->get_list();
         xml::node::list::iterator i = list.begin();
         for(; i != list.end(); i++) {
@@ -215,11 +215,11 @@ namespace gtkmail {
         return list.end();
     }
 
-    std::string URIHandlerMap::get_gtkmail_dir() {
+    std::string ProtocolHandlerMap::get_gtkmail_dir() {
         return (std::string(getenv("HOME"))+"/.gtkmail");
     }
 
-    xml::node::ptr URIHandlerMap::find_node(std::string uri) {
+    xml::node::ptr ProtocolHandlerMap::find_node(std::string uri) {
         xml::node::list& list = m_doc.get_list().front()->get_list();
         xml::node::list::iterator i = find_iter(uri);
         if(i != list.end()) {
@@ -229,7 +229,7 @@ namespace gtkmail {
         return xml::node::ptr();
     }
 
-    xml::node::ptr URIHandlerMap::append(std::string uri, std::string name, std::string handler) {
+    xml::node::ptr ProtocolHandlerMap::append(std::string uri, std::string name, std::string handler) {
         xml::node::list& list = m_doc.get_list().front()->get_list();
         xml::node::ptr node = xml::node::create(name); 
 
@@ -243,13 +243,13 @@ namespace gtkmail {
     }
 
     
-    std::istream& operator>>(std::istream& i, URIHandlerMap& uri_handler_map) {
+    std::istream& operator>>(std::istream& i, ProtocolHandlerMap& uri_handler_map) {
         uri_handler_map.m_doc.load(i);
         uri_handler_map.parse_document();
         return i;
     }
 
-    std::ostream& operator<<(std::ostream& o, const URIHandlerMap& uri_handler_map) {
+    std::ostream& operator<<(std::ostream& o, const ProtocolHandlerMap& uri_handler_map) {
         uri_handler_map.m_doc.save(o);
         return o;
     }
