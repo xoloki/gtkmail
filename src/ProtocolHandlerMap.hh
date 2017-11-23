@@ -18,8 +18,8 @@
  * 
  */
 
-#ifndef GTKMAIL_URIHANDLER_MAP_HH
-#define GTKMAIL_URIHANDLER_MAP_HH
+#ifndef GTKMAIL_PROTOCOLHANDLER_MAP_HH
+#define GTKMAIL_PROTOCOLHANDLER_MAP_HH
 
 #include <string>
 #include <list>
@@ -37,13 +37,13 @@ namespace gtkmail {
     class ProtocolHandler {
     public:
         ProtocolHandler();
-        ProtocolHandler(std::string uri, std::string handler);
+        ProtocolHandler(std::string protocol, std::string handler);
         ProtocolHandler(xml::node::ptr node);
         
-        std::string get_uri() const;
+        std::string get_protocol() const;
         std::string get_handler() const;
 
-        void set_uri(std::string s);
+        void set_protocol(std::string s);
         void set_handler(std::string s);
         
         xml::node::ptr get_node();
@@ -62,7 +62,7 @@ namespace gtkmail {
         class no_charset : public std::exception {
         public:
             virtual const char* what() const throw() { 
-                return "No default charset entry in urihandlermap file";
+                return "No default charset entry in protocolhandlermap file";
             }
         };
 
@@ -93,19 +93,19 @@ namespace gtkmail {
         typedef rep_type::difference_type difference_type;
         typedef rep_type::allocator_type allocator_type;            
 
-        iterator begin() { return m_uri_handlers.begin(); }
-        const_iterator begin() const { return m_uri_handlers.begin(); }
-        iterator end() { return m_uri_handlers.end(); }
-        const_iterator end() const { return m_uri_handlers.end(); }
-        reverse_iterator rbegin() { return m_uri_handlers.rbegin(); }
-        const_reverse_iterator rbegin() const { return m_uri_handlers.rbegin(); }
-        reverse_iterator rend() { return m_uri_handlers.rend(); }
-        const_reverse_iterator rend() const { return m_uri_handlers.rend(); }
-        bool empty() const { return m_uri_handlers.empty(); }
-        size_type size() const { return m_uri_handlers.size(); }
+        iterator begin() { return m_protocol_handlers.begin(); }
+        const_iterator begin() const { return m_protocol_handlers.begin(); }
+        iterator end() { return m_protocol_handlers.end(); }
+        const_iterator end() const { return m_protocol_handlers.end(); }
+        reverse_iterator rbegin() { return m_protocol_handlers.rbegin(); }
+        const_reverse_iterator rbegin() const { return m_protocol_handlers.rbegin(); }
+        reverse_iterator rend() { return m_protocol_handlers.rend(); }
+        const_reverse_iterator rend() const { return m_protocol_handlers.rend(); }
+        bool empty() const { return m_protocol_handlers.empty(); }
+        size_type size() const { return m_protocol_handlers.size(); }
 
-        iterator find(std::string uri);
-        const_iterator find(std::string uri) const;
+        iterator find(std::string protocol);
+        const_iterator find(std::string protocol) const;
         
         iterator find_handler(std::string handler);
         const_iterator find_handler(std::string handler) const;
@@ -124,26 +124,25 @@ namespace gtkmail {
         void load(std::string file);
         void save(std::string file);
 
-        friend std::istream& operator>>(std::istream& i, ProtocolHandlerMap& urihandlermap);
-        friend std::ostream& operator<<(std::ostream& o, const ProtocolHandlerMap& urihandlermap);
+        friend std::istream& operator>>(std::istream& i, ProtocolHandlerMap& protocolhandlermap);
+        friend std::ostream& operator<<(std::ostream& o, const ProtocolHandlerMap& protocolhandlermap);
         
         static ProtocolHandlerMap global;
         
         std::string get_gtkmail_dir();
 
     protected:
-        xml::node::list::iterator find_iter(std::string uri);
-        xml::node::ptr find_node(std::string uri);
-        xml::node::ptr append(std::string uri, std::string name, std::string handler);
+        xml::node::list::iterator find_iter(std::string protocol);
+        xml::node::ptr find_node(std::string protocol);
 
         void parse_document();
 
         xml::document m_doc;
         std::string m_file;
 
-        rep_type m_uri_handlers;
+        rep_type m_protocol_handlers;
     };
 
 }
 
-#endif //GTKMAIL_URIHANDLER_MAP_HH
+#endif //GTKMAIL_PROTOCOLHANDLER_MAP_HH

@@ -20,8 +20,8 @@
  * 
  */
 
-#ifndef GTKMAIL_URI_HANDLER_PREFLET_HH
-#define GTKMAIL_URI_HANDLER_PREFLET_HH
+#ifndef GTKMAIL_PROTOCOL_HANDLER_PREFLET_HH
+#define GTKMAIL_PROTOCOL_HANDLER_PREFLET_HH
 
 #include "Preflet.hh"
 #include "ProtocolHandlerMap.hh"
@@ -43,9 +43,9 @@ public:
     void save();
 
 protected:
-    ProtocolHandler m_uri_handler;
+    ProtocolHandler m_protocol_handler;
     
-    Gtk::Entry* m_uri;
+    Gtk::Entry* m_protocol;
     Gtk::Entry* m_handler;
 };
     
@@ -65,9 +65,9 @@ protected:
     
     class ModelCols : public Gtk::TreeModel::ColumnRecord {
     public:
-	ModelCols() { add(m_uri); add(m_handler); }
+	ModelCols() { add(m_protocol); add(m_handler); }
 	
-	Gtk::TreeModelColumn<Glib::ustring> m_uri;
+	Gtk::TreeModelColumn<Glib::ustring> m_protocol;
 	Gtk::TreeModelColumn<Glib::ustring> m_handler;
     };
     
@@ -83,4 +83,4 @@ protected:
     
 }
 
-#endif //GTKMAIL_URI_HANDLER_PREFLET_HH
+#endif //GTKMAIL_PROTOCOL_HANDLER_PREFLET_HH

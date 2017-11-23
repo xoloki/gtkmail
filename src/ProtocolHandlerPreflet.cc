@@ -34,20 +34,20 @@
 
 namespace gtkmail {
 
-ProtocolHandlerDialog::ProtocolHandlerDialog(ProtocolHandler uri_handler)
-    : m_uri_handler(uri_handler)
+ProtocolHandlerDialog::ProtocolHandlerDialog(ProtocolHandler protocol_handler)
+    : m_protocol_handler(protocol_handler)
 {
     Gtk::Table* general_table = Gtk::manage(new Gtk::Table(2, 2));
     Gtk::Label* label;
     
-    m_uri = Gtk::manage(new Gtk::Entry());
+    m_protocol = Gtk::manage(new Gtk::Entry());
     m_handler = Gtk::manage(new Gtk::Entry());
 
     // general table
-    label = Gtk::manage(new Gtk::Label("Uri"));
+    label = Gtk::manage(new Gtk::Label("Protocol"));
     label->set_alignment(1, 0.5);
     general_table->attach(*label,    0, 1, 0, 1, Gtk::SHRINK|Gtk::FILL);
-    general_table->attach(*m_uri ,   1, 2, 0, 1);
+    general_table->attach(*m_protocol ,   1, 2, 0, 1);
 
     label = Gtk::manage(new Gtk::Label("Handler"));
     label->set_alignment(1, 0.5);
@@ -59,7 +59,7 @@ ProtocolHandlerDialog::ProtocolHandlerDialog(ProtocolHandler uri_handler)
     get_vbox()->set_spacing(5);
     get_action_area()->set_layout(Gtk::BUTTONBOX_DEFAULT_STYLE);
 
-    get_vbox()->pack_start(*Preflet::create_title("URI Handler"), Gtk::PACK_SHRINK);
+    get_vbox()->pack_start(*Preflet::create_title("Protocol Handler"), Gtk::PACK_SHRINK);
     get_vbox()->pack_start(*Preflet::indent(general_table), Gtk::PACK_SHRINK);
 
     add_button(Gtk::Stock::OK, Gtk::RESPONSE_OK);
@@ -71,13 +71,13 @@ ProtocolHandlerDialog::ProtocolHandlerDialog(ProtocolHandler uri_handler)
 }
     
 void ProtocolHandlerDialog::load() {
-    m_uri->set_text(m_uri_handler.get_uri());
-    m_handler->set_text(m_uri_handler.get_handler());
+    m_protocol->set_text(m_protocol_handler.get_protocol());
+    m_handler->set_text(m_protocol_handler.get_handler());
 }
 
 void ProtocolHandlerDialog::save() {
-    m_uri_handler.set_uri(m_uri->get_text());
-    m_uri_handler.set_handler(m_handler->get_text());
+    m_protocol_handler.set_protocol(m_protocol->get_text());
+    m_protocol_handler.set_handler(m_handler->get_text());
 }
     
 ProtocolHandlerPreflet::ProtocolHandlerPreflet()
@@ -97,7 +97,7 @@ ProtocolHandlerPreflet::ProtocolHandlerPreflet()
     m_model = Gtk::TreeStore::create(m_cols);
     m_view->set_model(m_model);
 
-    m_view->append_column("URI", m_cols.m_uri);
+    m_view->append_column("Protocol", m_cols.m_protocol);
     m_view->append_column("Handler", m_cols.m_handler);
         
     m_select = m_view->get_selection();
@@ -132,7 +132,7 @@ void ProtocolHandlerPreflet::load() {
         Gtk::TreeModel::iterator j = m_model->append();
         Gtk::TreeModel::Row row = *j;
         
-        row[m_cols.m_uri] = i->second.get_uri();
+        row[m_cols.m_protocol] = i->second.get_protocol();
         row[m_cols.m_handler] = i->second.get_handler();
     }
 }
@@ -143,7 +143,7 @@ void ProtocolHandlerPreflet::save() {
     
 Gtk::Widget* ProtocolHandlerPreflet::get_icon() {
     Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 0));
-    Gtk::Label* label = Gtk::manage(new Gtk::Label("URI"));
+    Gtk::Label* label = Gtk::manage(new Gtk::Label("Protocol"));
     Gtk::Image* image = Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_xpm_data(addressbook_xpm)));
     
     vbox->pack_start(*image, Gtk::PACK_SHRINK);
@@ -153,9 +153,9 @@ Gtk::Widget* ProtocolHandlerPreflet::get_icon() {
 }
     
 void ProtocolHandlerPreflet::on_new() {
-    ProtocolHandler uri_handler;
-    ProtocolHandlerDialog dlg(uri_handler);
-    dlg.set_title("New URI Handler");
+    ProtocolHandler protocol_handler;
+    ProtocolHandlerDialog dlg(protocol_handler);
+    dlg.set_title("New Protocol Handler");
     dlg.show_all();
     if(dlg.run() == Gtk::RESPONSE_OK) {
         dlg.save();
@@ -164,10 +164,10 @@ void ProtocolHandlerPreflet::on_new() {
         Gtk::TreeModel::Row row = *i;
         
         try {
-            row[m_cols.m_uri] = uri_handler.get_uri();
-            row[m_cols.m_handler] = uri_handler.get_handler();
+            row[m_cols.m_protocol] = protocol_handler.get_protocol();
+            row[m_cols.m_handler] = protocol_handler.get_handler();
             
-            ProtocolHandlerMap::global.insert(uri_handler);
+            ProtocolHandlerMap::global.insert(protocol_handler);
 
         } catch(Glib::Exception& e) {
             display_exception(std::string("Unable to add new ProtocolHandler: ") + e.what(), &dlg);
@@ -184,8 +184,8 @@ void ProtocolHandlerPreflet::on_edit() {
     if(!j) return;
     Gtk::TreeModel::Row row = *j;
     
-    std::string uri = static_cast<Glib::ustring>(row[m_cols.m_uri]);
-    ProtocolHandlerMap::iterator i = ProtocolHandlerMap::global.find(uri);
+    std::string protocol = static_cast<Glib::ustring>(row[m_cols.m_protocol]);
+    ProtocolHandlerMap::iterator i = ProtocolHandlerMap::global.find(protocol);
     if(i == ProtocolHandlerMap::global.end()) return;
     
     ProtocolHandlerDialog dlg(i->second);
@@ -195,7 +195,7 @@ void ProtocolHandlerPreflet::on_edit() {
         dlg.save();
         
         try {
-            row[m_cols.m_uri] = i->second.get_uri();
+            row[m_cols.m_protocol] = i->second.get_protocol();
             row[m_cols.m_handler] = i->second.get_handler();
             
         } catch(Glib::Exception& e) {
@@ -213,8 +213,8 @@ void ProtocolHandlerPreflet::on_delete() {
     if(!j) return;
     Gtk::TreeModel::Row row = *j;
     
-    std::string uri = static_cast<Glib::ustring>(row[m_cols.m_uri]);
-    ProtocolHandlerMap::iterator i = ProtocolHandlerMap::global.find(uri);
+    std::string protocol = static_cast<Glib::ustring>(row[m_cols.m_protocol]);
+    ProtocolHandlerMap::iterator i = ProtocolHandlerMap::global.find(protocol);
     if(i == ProtocolHandlerMap::global.end()) return;
     
     ProtocolHandlerMap::global.erase(i);
