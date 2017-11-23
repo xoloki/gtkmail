@@ -27,12 +27,11 @@
 #include "Config.hh"
 #include "Dialog.hh"
 #include "AddressBook.hh"
+#include "ProtocolHandlerMap.hh"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
-#include <webkit/webkitwebview.h>
 
 #include <gtkmm/widget.h>
 #include <gtkmm/label.h>
@@ -45,59 +44,89 @@
 
 #include <jlib/sys/auto.hh>
 #include <jlib/sys/tfstream.hh>
+#include <jlib/sys/sys.hh>
 #include <jlib/util/util.hh>
 #include <jlib/net/net.hh>
 
 
 namespace gtkmail {
     
-    MailView::MailView()
-    {        
-        m_box = Gtk::manage(new Gtk::VBox());
+MailView::MailView()
+{        
+    m_box = Gtk::manage(new Gtk::VBox());
+    
+    this->add(*m_box);
+    this->set_policy(Gtk::POLICY_AUTOMATIC,Gtk::POLICY_AUTOMATIC);
+    this->show_all();
+}
+    
+Gtk::Widget* MailView::wrap_html(std::string data, std::string from) {
+    std::string style = "file:" + Config::global.get_user_style();
+    Gtk::Widget* w = 0;
+    bool load = Config::global.get_auto_load();
+    gboolean auto_load = FALSE;
+    WebKitWebSettings* settings;
+    
+    if(load && AddressBook::global.find_addr(jlib::net::extract_address(from)) != AddressBook::global.end())
+        auto_load = TRUE;
+    
+    GtkWidget* view = webkit_web_view_new();
+    
+    settings = webkit_web_settings_new();
+    g_object_set(G_OBJECT(settings), 
+                 "user-stylesheet-uri", style.data(),
+                 "auto-load-images", auto_load,
+                 "enable-private-browsing", TRUE,
+                 "enable-caret-browsing", FALSE,
+                 "enable-html5-database", FALSE,
+                 "enable-html5-local-storage", FALSE,
+                 "enable-scripts", FALSE,
+                 "enable-plugins", FALSE,
+                 "default-font-size", 12,
+                 "minimum-font-size", 12,
+                 NULL);
+    
+    webkit_web_view_set_settings(WEBKIT_WEB_VIEW(view), settings);
+    webkit_web_view_set_editable(WEBKIT_WEB_VIEW(view), FALSE);
+    webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(view), data.data(), "base uri");
+    
+    g_object_unref(G_OBJECT(settings));
+
+    g_signal_connect(G_OBJECT(view), "navigation-requested", (GCallback)&MailView::on_navigation_requested, nullptr);
         
-        this->add(*m_box);
-        this->set_policy(Gtk::POLICY_AUTOMATIC,Gtk::POLICY_AUTOMATIC);
-        this->show_all();
+    w = Gtk::manage(Glib::wrap(view));
+    
+    return w;
+}
+
+WebKitNavigationResponse MailView::on_navigation_requested(WebKitWebView*web_view, WebKitWebFrame *frame, WebKitNetworkRequest *request)
+{
+    std::cout << "Got request for " << webkit_network_request_get_uri(request) << std::endl;
+
+    const char* uri = webkit_network_request_get_uri(request);
+    jlib::util::URL url(uri);
+    std::string protocol = url.get_protocol();
+    auto i = ProtocolHandlerMap::global.find(protocol);
+    if(i != ProtocolHandlerMap::global.end()) {
+        ProtocolHandler& handler = i->second;
+
+        std::cout << "Found handler " << handler.get_handler() << std::endl;
+        std::ostringstream cmd;
+        cmd << handler.get_handler() << " " << uri << std::endl;
+
+        try {
+            jlib::sys::shell(cmd.str());
+        } catch(...) {
+            std::cout << "Handler failed" << std::endl;
+        }
+
+        return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
+    } else {
+        return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
     }
+}
 
-    Gtk::Widget* MailView::wrap_html(std::string data, std::string from) {
-        std::string style = "file:" + Config::global.get_user_style();
-        Gtk::Widget* w = 0;
-        bool load = Config::global.get_auto_load();
-        gboolean auto_load = FALSE;
-        WebKitWebSettings* settings;
-
-        if(load && AddressBook::global.find_addr(jlib::net::extract_address(from)) != AddressBook::global.end())
-            auto_load = TRUE;
-        
-        GtkWidget* view = webkit_web_view_new();
-
-        settings = webkit_web_settings_new();
-        g_object_set(G_OBJECT(settings), 
-                     "user-stylesheet-uri", style.data(),
-                     "auto-load-images", auto_load,
-                     "enable-private-browsing", TRUE,
-                     "enable-caret-browsing", FALSE,
-                     "enable-html5-database", FALSE,
-                     "enable-html5-local-storage", FALSE,
-                     "enable-scripts", FALSE,
-                     "enable-plugins", FALSE,
-                     "default-font-size", 12,
-                     "minimum-font-size", 12,
-                     NULL);
-        
-        webkit_web_view_set_settings(WEBKIT_WEB_VIEW(view), settings);
-        webkit_web_view_set_editable(WEBKIT_WEB_VIEW(view), FALSE);
-        webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(view), data.data(), "base uri");
-
-        g_object_unref(G_OBJECT(settings));
-
-        w = Gtk::manage(Glib::wrap(view));
-
-        return w;
-    }
-
-    Gtk::Widget* MailView::wrap_html(jlib::net::Email data, std::string from) {
+Gtk::Widget* MailView::wrap_html(jlib::net::Email data, std::string from) {
         std::string htmldata;
         std::string ctype = get_trim_ctype(data);
 

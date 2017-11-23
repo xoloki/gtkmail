@@ -36,6 +36,7 @@
 #include <jlib/net/Email.hh>
 
 #include <webkit/webkitwebsettings.h>
+#include <webkit/webkitwebview.h>
 
 namespace gtkmail {
     
@@ -87,6 +88,8 @@ namespace gtkmail {
 
         void on_html_view_show(Gtk::Widget* w);
 
+        static WebKitNavigationResponse on_navigation_requested(WebKitWebView*web_view, WebKitWebFrame *frame, WebKitNetworkRequest *request);
+        
         Gtk::TextView* create_text_view(std::string data);
 
         Gtk::VBox* m_box;
