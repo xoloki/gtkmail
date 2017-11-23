@@ -112,7 +112,7 @@ WebKitNavigationResponse MailView::on_navigation_requested(WebKitWebView*web_vie
 
         std::cout << "Found handler " << handler.get_handler() << std::endl;
         std::ostringstream cmd;
-        cmd << handler.get_handler() << " " << uri << std::endl;
+        cmd << handler.get_handler() << " '" << uri << "'" << std::endl;
 
         try {
             jlib::sys::shell(cmd.str());
