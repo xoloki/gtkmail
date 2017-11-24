@@ -101,6 +101,7 @@ Gtk::Widget* MailView::wrap_html(std::string data, std::string from, Gtk::Status
     g_signal_connect(G_OBJECT(view), "download-requested", (GCallback)&MailView::on_download_requested, nullptr);
     g_signal_connect(G_OBJECT(view), "mime-type-policy-decision-requested", (GCallback)&MailView::on_mime_type_policy_decision_requested, nullptr);
     g_signal_connect(G_OBJECT(view), "navigation-policy-decision-requested", (GCallback)&MailView::on_navigation_policy_decision_requested, nullptr);
+    g_signal_connect(G_OBJECT(view), "new-window-policy-decision-requested", (GCallback)&MailView::on_new_window_policy_decision_requested, nullptr);
     g_signal_connect(G_OBJECT(view), "hovering-over-link", (GCallback)&MailView::on_hovering_over_link, statusbar);
 
     w = Gtk::manage(Glib::wrap(view));
@@ -108,6 +109,21 @@ Gtk::Widget* MailView::wrap_html(std::string data, std::string from, Gtk::Status
     return w;
 }
 
+gboolean MailView::on_new_window_policy_decision_requested(WebKitWebView* web_view, WebKitWebFrame* frame, WebKitNetworkRequest* request, WebKitWebNavigationAction* navigation_action, WebKitWebPolicyDecision* policy_decision, gpointer user_data)
+{
+    std::cout << "Got new window policy decision request with navigation request for " << webkit_network_request_get_uri(request) << std::endl;
+
+    WebKitNavigationResponse response = on_navigation_requested(web_view, frame, request);
+    
+    return FALSE;
+}
+    
+WebKitWebView* MailView::create_web_view(WebKitWebView* web_view, WebKitWebFrame* frame, gpointer user_data)
+{
+    std::cout << "Got create web view" << std::endl;
+    return NULL;
+}
+    
 void MailView::on_hovering_over_link(WebKitWebView *web_view, gchar* title, gchar* uri, gpointer user_data)
 {
     Gtk::Statusbar* status = (Gtk::Statusbar*)user_data;

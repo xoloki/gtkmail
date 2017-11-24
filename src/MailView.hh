@@ -99,6 +99,10 @@ namespace gtkmail {
         static gboolean on_mime_type_policy_decision_requested (WebKitWebView* web_view, WebKitWebFrame* frame, WebKitNetworkRequest* request, gchar* mimetype, WebKitWebPolicyDecision* policy_decision, gpointer user_data);
 
         static void on_hovering_over_link(WebKitWebView *web_view, gchar* title, gchar* uri, gpointer user_data);
+
+        static WebKitWebView* create_web_view(WebKitWebView* web_view, WebKitWebFrame* frame, gpointer user_data);
+
+        static gboolean on_new_window_policy_decision_requested(WebKitWebView* web_view, WebKitWebFrame* frame, WebKitNetworkRequest* request, WebKitWebNavigationAction* navigation_action, WebKitWebPolicyDecision* policy_decision, gpointer user_data);
         
         Gtk::TextView* create_text_view(std::string data);
 
