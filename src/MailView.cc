@@ -42,6 +42,8 @@
 #include <gtkmm/stock.h>
 #include <gtkmm/button.h>
 
+#include <webkit/webkitdownload.h>
+
 #include <jlib/sys/auto.hh>
 #include <jlib/sys/tfstream.hh>
 #include <jlib/sys/sys.hh>
@@ -51,7 +53,8 @@
 
 namespace gtkmail {
     
-MailView::MailView()
+MailView::MailView(Gtk::Statusbar* statusbar)
+    : m_statusbar(statusbar)
 {        
     m_box = Gtk::manage(new Gtk::VBox());
     
@@ -60,7 +63,8 @@ MailView::MailView()
     this->show_all();
 }
     
-Gtk::Widget* MailView::wrap_html(std::string data, std::string from) {
+Gtk::Widget* MailView::wrap_html(std::string data, std::string from, Gtk::Statusbar* statusbar)
+{
     std::string style = "file:" + Config::global.get_user_style();
     Gtk::Widget* w = 0;
     bool load = Config::global.get_auto_load();
@@ -76,6 +80,7 @@ Gtk::Widget* MailView::wrap_html(std::string data, std::string from) {
     g_object_set(G_OBJECT(settings), 
                  "user-stylesheet-uri", style.data(),
                  "auto-load-images", auto_load,
+
                  "enable-private-browsing", TRUE,
                  "enable-caret-browsing", FALSE,
                  "enable-html5-database", FALSE,
@@ -93,15 +98,41 @@ Gtk::Widget* MailView::wrap_html(std::string data, std::string from) {
     g_object_unref(G_OBJECT(settings));
 
     g_signal_connect(G_OBJECT(view), "navigation-requested", (GCallback)&MailView::on_navigation_requested, nullptr);
-        
+    g_signal_connect(G_OBJECT(view), "download-requested", (GCallback)&MailView::on_download_requested, nullptr);
+    g_signal_connect(G_OBJECT(view), "mime-type-policy-decision-requested", (GCallback)&MailView::on_mime_type_policy_decision_requested, nullptr);
+    g_signal_connect(G_OBJECT(view), "navigation-policy-decision-requested", (GCallback)&MailView::on_navigation_policy_decision_requested, nullptr);
+    g_signal_connect(G_OBJECT(view), "hovering-over-link", (GCallback)&MailView::on_hovering_over_link, statusbar);
+
     w = Gtk::manage(Glib::wrap(view));
     
     return w;
 }
 
+void MailView::on_hovering_over_link(WebKitWebView *web_view, gchar* title, gchar* uri, gpointer user_data)
+{
+    Gtk::Statusbar* status = (Gtk::Statusbar*)user_data;
+
+    if(status != nullptr) {
+        if(uri != nullptr) {
+            status->pop();
+            status->push(uri);
+        } else {
+            status->pop();
+            status->push("");
+        }
+    }
+}
+    
+gboolean MailView::on_navigation_policy_decision_requested(WebKitWebView* web_view, WebKitWebFrame* frame, WebKitNetworkRequest* request, WebKitWebNavigationAction* navigation_action, WebKitWebPolicyDecision* policy_decision, gpointer user_data)
+{
+    std::cout << "Got navigation policy decision request for " << webkit_network_request_get_uri(request) << std::endl;
+
+    return FALSE;
+}
+    
 WebKitNavigationResponse MailView::on_navigation_requested(WebKitWebView*web_view, WebKitWebFrame *frame, WebKitNetworkRequest *request)
 {
-    std::cout << "Got request for " << webkit_network_request_get_uri(request) << std::endl;
+    std::cout << "Got navigation request for " << webkit_network_request_get_uri(request) << std::endl;
 
     const char* uri = webkit_network_request_get_uri(request);
     jlib::util::URL url(uri);
@@ -126,7 +157,19 @@ WebKitNavigationResponse MailView::on_navigation_requested(WebKitWebView*web_vie
     }
 }
 
-Gtk::Widget* MailView::wrap_html(jlib::net::Email data, std::string from) {
+gboolean MailView::on_download_requested(WebKitWebView  *web_view, WebKitDownload *download, gpointer user_data)
+{
+    std::cout << "Got download request for " << webkit_download_get_uri(download) << std::endl;
+    return TRUE;
+}
+
+gboolean MailView::on_mime_type_policy_decision_requested (WebKitWebView* web_view, WebKitWebFrame* frame, WebKitNetworkRequest* request, gchar* mimetype, WebKitWebPolicyDecision* policy_decision, gpointer user_data)
+{
+    std::cout << "Got mime type policy decision request for " << mimetype << ":" << webkit_network_request_get_uri(request) << std::endl;
+    return FALSE;
+}
+
+Gtk::Widget* MailView::wrap_html(jlib::net::Email data, std::string from, Gtk::Statusbar* statusbar) {
         std::string htmldata;
         std::string ctype = get_trim_ctype(data);
 
@@ -139,7 +182,7 @@ Gtk::Widget* MailView::wrap_html(jlib::net::Email data, std::string from) {
             throw exception("unknown content-type " + ctype);
         }
 
-        return wrap_html(htmldata, from);
+        return wrap_html(htmldata, from, statusbar);
     }
 
     std::string MailView::get_trim_ctype(const jlib::net::Email& e) {
@@ -231,7 +274,7 @@ Gtk::Widget* MailView::wrap_html(jlib::net::Email data, std::string from) {
             if(getenv("GTKMAIL_MAILVIEW_DEBUG"))
                 std::cerr << "gtkmail::MailView::set_data_text: text/html" << std::endl;
 
-            Gtk::Widget* child = wrap_html(data, m_data["from"]);
+            Gtk::Widget* child = wrap_html(data, m_data["from"], m_statusbar);
 
             child->show();
             m_box->pack_start(*child, Gtk::PACK_SHRINK);
@@ -420,7 +463,7 @@ Gtk::Widget* MailView::wrap_html(jlib::net::Email data, std::string from) {
             bbox->pack_start(*Gtk::manage(new Gtk::Image(buf->scale_simple(32, 32, Gdk::INTERP_NEAREST))));
         } 
         else if(ctype == "text/html") {
-            child = wrap_html(data, m_data["from"]);
+            child = wrap_html(data, m_data["from"], m_statusbar);
 
             Glib::RefPtr<Gdk::Pixbuf> buf = Config::global.text_buf;
             bbox->pack_start(*Gtk::manage(new Gtk::Image(buf->scale_simple(16, 16, Gdk::INTERP_BILINEAR))));

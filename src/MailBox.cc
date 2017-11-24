@@ -340,7 +340,8 @@ namespace gtkmail {
         
         message_win->add(*m_message_view);
         
-        m_mail_view = manage(new MailView());
+        m_status = manage(new Gtk::Statusbar());
+        m_mail_view = manage(new MailView(m_status));
         
         m_message_paned = manage(new Gtk::VPaned());
         
@@ -351,7 +352,6 @@ namespace gtkmail {
         m_paned->add2(*m_message_paned);
         pack_start(*m_paned, true, true, 0);
         
-        m_status = manage(new Gtk::Statusbar());
         pack_end(*m_status, false, false, 0);
 
         {

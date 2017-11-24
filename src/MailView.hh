@@ -32,14 +32,16 @@
 #include <gtkmm/textview.h>
 #include <gtkmm/fontselection.h>
 #include <gtkmm/fileselection.h>
+#include <gtkmm/statusbar.h>
 
 #include <jlib/net/Email.hh>
 
 #include <webkit/webkitwebsettings.h>
 #include <webkit/webkitwebview.h>
+#include <webkit/webkitwebnavigationaction.h>
 
 namespace gtkmail {
-    
+
     class MailView : public Gtk::ScrolledWindow {
     public:
         class exception : public std::exception {
@@ -53,7 +55,7 @@ namespace gtkmail {
             std::string m_msg;
         };
 
-        MailView();
+        MailView(Gtk::Statusbar* statusbar);
 
         void set_data(jlib::net::Email data);
         void clear();
@@ -65,8 +67,8 @@ namespace gtkmail {
         static Glib::ustring get(std::string data, std::string charset="");
         static std::string unget(std::string data, std::string charset="");
 
-        static Gtk::Widget* wrap_html(jlib::net::Email data, std::string from);
-        static Gtk::Widget* wrap_html(std::string data, std::string from);
+        static Gtk::Widget* wrap_html(jlib::net::Email data, std::string from, Gtk::Statusbar* status = nullptr);
+        static Gtk::Widget* wrap_html(std::string data, std::string from, Gtk::Statusbar* status = nullptr);
 
         static std::string get_trim_ctype(const jlib::net::Email& e);
         static std::string get_ctype_desc(std::string ctype);
@@ -88,12 +90,21 @@ namespace gtkmail {
 
         void on_html_view_show(Gtk::Widget* w);
 
+        static gboolean on_navigation_policy_decision_requested(WebKitWebView* web_view, WebKitWebFrame* frame, WebKitNetworkRequest* request, WebKitWebNavigationAction* navigation_action, WebKitWebPolicyDecision* policy_decision, gpointer user_data);
+        
         static WebKitNavigationResponse on_navigation_requested(WebKitWebView*web_view, WebKitWebFrame *frame, WebKitNetworkRequest *request);
+
+        static gboolean on_download_requested(WebKitWebView  *web_view, WebKitDownload *download, gpointer user_data);
+
+        static gboolean on_mime_type_policy_decision_requested (WebKitWebView* web_view, WebKitWebFrame* frame, WebKitNetworkRequest* request, gchar* mimetype, WebKitWebPolicyDecision* policy_decision, gpointer user_data);
+
+        static void on_hovering_over_link(WebKitWebView *web_view, gchar* title, gchar* uri, gpointer user_data);
         
         Gtk::TextView* create_text_view(std::string data);
 
         Gtk::VBox* m_box;
         jlib::net::Email m_data;
+        Gtk::Statusbar* m_statusbar;
     };
     
 }
