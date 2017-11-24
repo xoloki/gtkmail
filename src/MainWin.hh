@@ -79,6 +79,8 @@ namespace gtkmail {
         void on_view_text();
         void on_view_html();
 
+        void on_view_display_images();
+        
         void on_window_next();
         void on_window_prev();
         

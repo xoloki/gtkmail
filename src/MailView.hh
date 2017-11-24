@@ -62,13 +62,15 @@ namespace gtkmail {
 
         void refresh();
 
+        void display_images();
+        
         static Glib::ustring get_header(jlib::net::Email data, std::string header);
         static Glib::ustring get_data(jlib::net::Email data);
         static Glib::ustring get(std::string data, std::string charset="");
         static std::string unget(std::string data, std::string charset="");
 
-        static Gtk::Widget* wrap_html(jlib::net::Email data, std::string from, Gtk::Statusbar* status = nullptr);
-        static Gtk::Widget* wrap_html(std::string data, std::string from, Gtk::Statusbar* status = nullptr);
+        static Gtk::Widget* wrap_html(jlib::net::Email data, std::string from, Gtk::Statusbar* status = nullptr, bool display_images = false);
+        static Gtk::Widget* wrap_html(std::string data, std::string from, Gtk::Statusbar* status = nullptr, bool display_images = false);
 
         static std::string get_trim_ctype(const jlib::net::Email& e);
         static std::string get_ctype_desc(std::string ctype);
@@ -109,6 +111,7 @@ namespace gtkmail {
         Gtk::VBox* m_box;
         jlib::net::Email m_data;
         Gtk::Statusbar* m_statusbar;
+        bool m_display_images = false;
     };
     
 }

@@ -1731,6 +1731,10 @@ namespace gtkmail {
         }
     }
 
+    void MailBox::display_images() {
+        m_mail_view->display_images();
+    }
+    
     void MailBox::reset() {
         set_sensitive(false);
         write_status("Resetting mailbox...");

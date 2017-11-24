@@ -63,7 +63,7 @@ MailView::MailView(Gtk::Statusbar* statusbar)
     this->show_all();
 }
     
-Gtk::Widget* MailView::wrap_html(std::string data, std::string from, Gtk::Statusbar* statusbar)
+Gtk::Widget* MailView::wrap_html(std::string data, std::string from, Gtk::Statusbar* statusbar, bool display_images)
 {
     std::string style = "file:" + Config::global.get_user_style();
     Gtk::Widget* w = 0;
@@ -71,7 +71,7 @@ Gtk::Widget* MailView::wrap_html(std::string data, std::string from, Gtk::Status
     gboolean auto_load = FALSE;
     WebKitWebSettings* settings;
     
-    if(load && AddressBook::global.find_addr(jlib::net::extract_address(from)) != AddressBook::global.end())
+    if(display_images || (load && AddressBook::global.find_addr(jlib::net::extract_address(from)) != AddressBook::global.end()))
         auto_load = TRUE;
     
     GtkWidget* view = webkit_web_view_new();
@@ -185,7 +185,8 @@ gboolean MailView::on_mime_type_policy_decision_requested (WebKitWebView* web_vi
     return FALSE;
 }
 
-Gtk::Widget* MailView::wrap_html(jlib::net::Email data, std::string from, Gtk::Statusbar* statusbar) {
+Gtk::Widget* MailView::wrap_html(jlib::net::Email data, std::string from, Gtk::Statusbar* statusbar, bool display_images)
+{
         std::string htmldata;
         std::string ctype = get_trim_ctype(data);
 
@@ -198,7 +199,7 @@ Gtk::Widget* MailView::wrap_html(jlib::net::Email data, std::string from, Gtk::S
             throw exception("unknown content-type " + ctype);
         }
 
-        return wrap_html(htmldata, from, statusbar);
+        return wrap_html(htmldata, from, statusbar, display_images);
     }
 
     std::string MailView::get_trim_ctype(const jlib::net::Email& e) {
@@ -211,7 +212,12 @@ Gtk::Widget* MailView::wrap_html(jlib::net::Email data, std::string from, Gtk::S
 
         return ctype;
     }
-    
+
+    void MailView::display_images() {
+        clear();
+        m_display_images = true;
+        set_data(m_data, 0);
+    }
 
     void MailView::set_data(jlib::net::Email data, int level) {
         std::string ctype = get_trim_ctype(data);
@@ -290,7 +296,7 @@ Gtk::Widget* MailView::wrap_html(jlib::net::Email data, std::string from, Gtk::S
             if(getenv("GTKMAIL_MAILVIEW_DEBUG"))
                 std::cerr << "gtkmail::MailView::set_data_text: text/html" << std::endl;
 
-            Gtk::Widget* child = wrap_html(data, m_data["from"], m_statusbar);
+            Gtk::Widget* child = wrap_html(data, m_data["from"], m_statusbar, m_display_images);
 
             child->show();
             m_box->pack_start(*child, Gtk::PACK_SHRINK);
@@ -358,6 +364,7 @@ Gtk::Widget* MailView::wrap_html(jlib::net::Email data, std::string from, Gtk::S
     }
 
     void MailView::clear() {
+        m_display_images = false;
         //m_box->foreach(sigc::mem_fun(m_box, &Gtk::VBox::remove));
         m_box->foreach(sigc::bind(sigc::ptr_fun(&gtkmail::on_remove), m_box));
     }
@@ -479,7 +486,7 @@ Gtk::Widget* MailView::wrap_html(jlib::net::Email data, std::string from, Gtk::S
             bbox->pack_start(*Gtk::manage(new Gtk::Image(buf->scale_simple(32, 32, Gdk::INTERP_NEAREST))));
         } 
         else if(ctype == "text/html") {
-            child = wrap_html(data, m_data["from"], m_statusbar);
+            child = wrap_html(data, m_data["from"], m_statusbar, m_display_images);
 
             Glib::RefPtr<Gdk::Pixbuf> buf = Config::global.text_buf;
             bbox->pack_start(*Gtk::manage(new Gtk::Image(buf->scale_simple(16, 16, Gdk::INTERP_BILINEAR))));

@@ -138,6 +138,7 @@ namespace gtkmail {
             "      <menuitem action='Prefs'/>"
             "    </menu>"
             "    <menu action='View'>"
+            "      <menuitem action='DisplayImages'/>"
             "    </menu>"
             "    <menu action='Tab'>"
             "      <menuitem action='Next'/>"
@@ -192,7 +193,8 @@ namespace gtkmail {
         m_actions->add(Gtk::Action::create("Prefs", Gtk::Stock::PREFERENCES), Gtk::AccelKey("<control>P"), sigc::mem_fun(this, &gtkmail::MainWin::on_preferences));
 
         m_actions->add(Gtk::Action::create("View", "_View"));
-
+        m_actions->add(Gtk::Action::create("DisplayImages", Gtk::Stock::PREFERENCES, "_Display Images"), Gtk::AccelKey("<control>D"), sigc::mem_fun(this, &gtkmail::MainWin::on_view_display_images));
+        
         m_actions->add(Gtk::Action::create("Tab", "_Tab"));
         m_actions->add(Gtk::Action::create("Next", Gtk::Stock::GO_FORWARD, "_Next"), Gtk::AccelKey("<control>Page_Down"), 
                        sigc::mem_fun(this, &gtkmail::MainWin::on_window_next));
@@ -459,6 +461,10 @@ namespace gtkmail {
         }
 
         return 1;
+    }
+
+    void MainWin::on_view_display_images() {
+        static_cast<gtkmail::MailBox*>(m_boxes->get_current()->get_child())->display_images();
     }
 
     void MainWin::on_preferences() {

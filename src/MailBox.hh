@@ -214,7 +214,9 @@ namespace gtkmail {
         jlib::net::folder_info_type get_selected_folder_info();
 
         void reset();
-
+        
+        void display_images();
+        
         void set_pane_pos();
 
         void refresh_viewer();
