@@ -712,6 +712,7 @@ namespace gtkmail {
             gtkmail::MailBox* box = dynamic_cast<gtkmail::MailBox*>(i->get_child());
             if(box) {
                 box->set_pane_pos();
+                box->set_col_pos();
             }
         }
 

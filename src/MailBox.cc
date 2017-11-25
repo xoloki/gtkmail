@@ -57,111 +57,6 @@
 #include <string>
 #include <sstream>
 
-const int BSIZE=1024;
-const bool DEBUG = false;
-const int WIN_WIDTH=940;
-const int WIN_HEIGHT=500;
-
-const int FOLDER_TREE_COLUMN_NUM=3;
-
-const char* FOLDER_TREE_TITLES[] = { "Folder", "N", "T", NULL };
-const int FOLDER_TREE_FOLDER_COLUMN_N=0;
-const int FOLDER_TREE_FOLDER_COLUMN_WIDTH=140;
-
-const int FOLDER_TREE_NEW_COLUMN_N=1;
-const int FOLDER_TREE_NEW_COLUMN_WIDTH=25;
-
-const int FOLDER_TREE_TOTAL_COLUMN_N=2;
-const int FOLDER_TREE_TOTAL_COLUMN_WIDTH=25;
-
-const int FOLDER_TREE_BUFFER = 45;
-
-const int FOLDER_COLUMN=0;
-const int FOLDER_COLUMN_WIDTH=140;
-
-const int MAX_COLUMN = 8;
-
-const char* MESSAGE_TREE_TITLES[] = {
-    "Type", "N", "D", "A", "Size", "Date", "From", "Subject", NULL
-};
-
-const int MESSAGE_TREE_TYPE_COLUMN_N=0;
-const int MESSAGE_TREE_TYPE_COLUMN_WIDTH=100;
-
-const int ANSWERED_FLAG_COLUMN=3;
-const int ANSWERED_FLAG_COLUMN_WIDTH=10;
-const std::string ANSWERED_FLAG_COLUMN_TITLE="A";
-
-const int NEW_FLAG_COLUMN=1;
-const int NEW_FLAG_COLUMN_WIDTH=10;
-const std::string NEW_FLAG_COLUMN_TITLE="N";
-
-const int DELETED_FLAG_COLUMN=2;
-const int DELETED_FLAG_COLUMN_WIDTH=10;
-const std::string DELETED_FLAG_COLUMN_TITLE="D";
-
-const int SIZE_COLUMN=4;
-const int SIZE_COLUMN_WIDTH=40;
-const std::string SIZE_COLUMN_TITLE="Size";
-
-const int DATE_COLUMN=5;
-const int DATE_COLUMN_WIDTH=80;
-const std::string DATE_COLUMN_TITLE="Date";
-
-const int FROM_COLUMN=6;
-const int FROM_COLUMN_WIDTH=235;
-const std::string FROM_COLUMN_TITLE="From";
-
-const int SUBJECT_COLUMN=7;
-const int SUBJECT_COLUMN_WIDTH=135;
-const std::string SUBJECT_COLUMN_TITLE="Subject";
-
-const int FOLDER_SELECT_NONE = -1;
-
-const int BOGON_COLUMN = 69;
-
-const int GNOME_PAD = 8;
-
-const std::string QUEUE_CHECK_TYPE = "check";
-const std::string QUEUE_DELETE_TYPE = "delete";
-const std::string QUEUE_UNDELETE_TYPE = "undelete";
-const std::string QUEUE_VIEW_TYPE = "view";
-const std::string QUEUE_EXPUNGE_TYPE = "expunge";
-const std::string QUEUE_SAVE_TYPE = "save";
-
-const unsigned int QUEUE_VIEW_PRI = 1;
-const unsigned int QUEUE_DELETE_PRI = 2;
-const unsigned int QUEUE_UNDELETE_PRI = 2;
-const unsigned int QUEUE_CHECK_PRI = 4;
-const unsigned int QUEUE_EXPUNGE_PRI = 3;
-const unsigned int QUEUE_SAVE_PRI = 1;
-
-const std::string STATUS_TRUE = "X";
-const std::string STATUS_FALSE = "";
-
-const std::string ACTION_RUNNING = "O";
-const std::string ACTION_WAITING = "/";
-
-const std::string ACTION_VIEW = "V";
-const std::string ACTION_DELETE = "D";
-const std::string ACTION_SAVE = "S";
-const std::string ACTION_EXPUNGE = "X";
-const std::string ACTION_CHECK = "C";
-
-/*
-gint clist_compare(GtkCList     *clist,
-                   gconstpointer ptr1,
-                   gconstpointer ptr2) {
-
-    gchar* text1 = GTK_CELL_TEXT(((GtkCListRow*)ptr1)->cell[clist->sort_column])->text;
-    gchar* text2 = GTK_CELL_TEXT(((GtkCListRow*)ptr2)->cell[clist->sort_column])->text;
-
-    std::cout << "comparing data "<<text1<< ","<<text2<< std::endl;
-
-    return strcmp(text1,text2);
-    }
-*/
-
 namespace gtkmail {
 
     struct iterator_data {
@@ -1911,6 +1806,14 @@ namespace gtkmail {
         if(i != Config::global.end()) {
             i->set_folder_pos(m_paned->get_position());
             i->set_message_pos(m_message_paned->get_position());
+        }
+    }
+
+    void MailBox::set_col_pos() {
+        Config::iterator i = Config::global.find(m_name);
+        if(i != Config::global.end()) {
+            //i->set_message_pos(m_message_paned->get_position());
+            
         }
     }
 

@@ -218,6 +218,7 @@ namespace gtkmail {
         void display_images();
         
         void set_pane_pos();
+        void set_col_pos();
 
         void refresh_viewer();
         
