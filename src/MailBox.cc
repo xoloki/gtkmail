@@ -151,69 +151,80 @@ namespace gtkmail {
         // set up columns.  since i have to enable strikethrough, i have to do this nasty shite
         Gtk::CellRendererText* crt;
         Gtk::CellRendererPixbuf* crp;
-        Gtk::TreeView::Column* col;
+        Gtk::TreeView::Column* col = nullptr;
         Gtk::Image* col_image;
 
-        // icon col
-        crp = Gtk::manage(new Gtk::CellRendererPixbuf());
-        col_image = Gtk::manage( new Gtk::Image(Config::global.mail_new_buf->copy()));
-        col_image->show();
+        Config::iterator ci = Config::global.find(m_name);
+        if(ci == Config::global.end())
+            throw std::runtime_error("No config for mailbox " + m_name);
+                                     
+        auto cols = ci->get_message_cols();
 
-        col = Gtk::manage( new Gtk::TreeView::Column() ); 
-        col->pack_start(*crp, true);
-        col->set_widget(*col_image);
-        col->set_cell_data_func(*crp, sigc::mem_fun(*this, &MailBox::render_icon));
-        crp->property_xalign() = 0.5;
-        crp->property_yalign() = 0.5;
-        m_message_view->append_column(*col);
+        for(auto column : cols) {
+            if(column.title == "READ") {
+                // icon col
+                crp = Gtk::manage(new Gtk::CellRendererPixbuf());
+                col_image = Gtk::manage( new Gtk::Image(Config::global.mail_new_buf->copy()));
+                col_image->show();
+                
+                col = Gtk::manage( new Gtk::TreeView::Column() ); 
+                col->pack_start(*crp, true);
+                col->set_widget(*col_image);
+                col->set_cell_data_func(*crp, sigc::mem_fun(*this, &MailBox::render_icon));
+                crp->property_xalign() = 0.5;
+                crp->property_yalign() = 0.5;
+                m_message_view->append_column(*col);
+            } else if(column.title == "ATTACH") {
+                // attach col
+                crp = Gtk::manage(new Gtk::CellRendererPixbuf());
+                col_image = Gtk::manage( new Gtk::Image(Config::global.attachment_buf->copy()));
+                col_image->show();
+                
+                col = Gtk::manage( new Gtk::TreeView::Column() ); 
+                col->pack_start(*crp, true);
+                col->set_widget(*col_image);
+                col->set_cell_data_func(*crp, sigc::mem_fun(*this, &MailBox::render_attach));
+                crp->property_xalign() = 0.5;
+                crp->property_yalign() = 0.5;
+                m_message_view->append_column(*col);
+            } else if(column.title == "Date") {
+                // date col
+                crt = Gtk::manage(new Gtk::CellRendererText());
+                col = Gtk::manage(new Gtk::TreeView::Column("Date", *crt)); 
+                col->set_cell_data_func(*crt, sigc::mem_fun(*this, &MailBox::render_date));
+                col->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &MailBox::on_column_clicked), "date"));
+                m_message_view->append_column(*col);
+            } else if(column.title == "Size") {
+                // size col
+                crt = Gtk::manage(new Gtk::CellRendererText());
+                crt->property_xalign() = 1.0;
+                col = Gtk::manage(new Gtk::TreeView::Column("Size", *crt)); 
+                col->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &MailBox::on_column_clicked), "size"));
+                col->set_cell_data_func(*crt, sigc::mem_fun(*this, &MailBox::render_size));
+                m_message_view->append_column(*col);
+            } else if(column.title == "From") {
+                // from col
+                crt = Gtk::manage(new Gtk::CellRendererText());
+                col = Gtk::manage(new Gtk::TreeView::Column("From")); 
+                col->pack_start(*crt, false);
+                col->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &MailBox::on_column_clicked), "from"));
+                col->set_cell_data_func(*crt, sigc::mem_fun(*this, &MailBox::render_from));
+                //col->property_fixed_width() = 200;
+                m_message_view->append_column(*col);
+            } else if(column.title == "Subject") {
+                // subject col
+                crt = Gtk::manage(new Gtk::CellRendererText());
+                col = Gtk::manage(new Gtk::TreeView::Column("Subject")); 
+                col->pack_start(*crt, false);
+                col->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &MailBox::on_column_clicked), "subject"));
+                col->set_cell_data_func(*crt, sigc::mem_fun(*this, &MailBox::render_subject));
+                m_message_view->append_column(*col);
+            }                 
+        }
 
-        // attach col
-        crp = Gtk::manage(new Gtk::CellRendererPixbuf());
-        col_image = Gtk::manage( new Gtk::Image(Config::global.attachment_buf->copy()));
-        col_image->show();
-
-        col = Gtk::manage( new Gtk::TreeView::Column() ); 
-        col->pack_start(*crp, true);
-        col->set_widget(*col_image);
-        col->set_cell_data_func(*crp, sigc::mem_fun(*this, &MailBox::render_attach));
-        crp->property_xalign() = 0.5;
-        crp->property_yalign() = 0.5;
-        m_message_view->append_column(*col);
-
-        // date col
-        crt = Gtk::manage(new Gtk::CellRendererText());
-        col = Gtk::manage(new Gtk::TreeView::Column("Date", *crt)); 
-        col->set_cell_data_func(*crt, sigc::mem_fun(*this, &MailBox::render_date));
-        col->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &MailBox::on_column_clicked), "date"));
-        m_message_view->append_column(*col);
-
-        // size col
-        crt = Gtk::manage(new Gtk::CellRendererText());
-        crt->property_xalign() = 1.0;
-        col = Gtk::manage(new Gtk::TreeView::Column("Size", *crt)); 
-        col->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &MailBox::on_column_clicked), "size"));
-        col->set_cell_data_func(*crt, sigc::mem_fun(*this, &MailBox::render_size));
-        m_message_view->append_column(*col);
-
-        // from col
-        crt = Gtk::manage(new Gtk::CellRendererText());
-        col = Gtk::manage(new Gtk::TreeView::Column("From")); 
-        col->pack_start(*crt, false);
-        col->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &MailBox::on_column_clicked), "from"));
-        col->set_cell_data_func(*crt, sigc::mem_fun(*this, &MailBox::render_from));
-        //col->property_fixed_width() = 200;
-        m_message_view->append_column(*col);
-
-        // subject col
-        crt = Gtk::manage(new Gtk::CellRendererText());
-        col = Gtk::manage(new Gtk::TreeView::Column("Subject")); 
-        col->pack_start(*crt, false);
-        col->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &MailBox::on_column_clicked), "subject"));
-        col->set_cell_data_func(*crt, sigc::mem_fun(*this, &MailBox::render_subject));
-        m_message_view->append_column(*col);
-
-        m_message_view->set_expander_column(*col);
-
+        if(col != nullptr)
+            m_message_view->set_expander_column(*col);
+        
         Glib::ListHandle<Gtk::TreeViewColumn*> list = m_message_view->get_columns();
         Glib::ListHandle<Gtk::TreeViewColumn*>::iterator i = list.begin();
         for(; i != list.end(); i++) {
