@@ -266,7 +266,13 @@ namespace gtkmail {
     }
 
     void Config::MailBox::set_message_cols(const std::vector<Config::MailBox::Column>& cols) {
-        
+        std::ostringstream o;
+        for(int i = 0; i < cols.size(); i++) {
+            o << cols[i].title << ":" << cols[i].width;
+            if((i+1) < cols.size())
+                o << ",";
+        }
+        m_node->set_attribute("message_cols", o.str());
     }
     
     xml::node::ptr Config::MailBox::get_node() {
