@@ -157,24 +157,27 @@ namespace gtkmail {
         Config::iterator ci = Config::global.find(m_name);
         if(ci == Config::global.end())
             throw std::runtime_error("No config for mailbox " + m_name);
-                                     
+
+        {
+            // icon col
+            crp = Gtk::manage(new Gtk::CellRendererPixbuf());
+            col_image = Gtk::manage( new Gtk::Image(Config::global.mail_new_buf->copy()));
+            col_image->show();
+            
+            col = Gtk::manage( new Gtk::TreeView::Column() ); 
+            col->pack_start(*crp, true);
+            col->set_widget(*col_image);
+            col->set_cell_data_func(*crp, sigc::mem_fun(*this, &MailBox::render_icon));
+            crp->property_xalign() = 0.5;
+            crp->property_yalign() = 0.5;
+            m_message_view->append_column(*col);
+        }
+
+        
         auto cols = ci->get_message_cols();
 
         for(auto column : cols) {
-            if(column.title == "READ") {
-                // icon col
-                crp = Gtk::manage(new Gtk::CellRendererPixbuf());
-                col_image = Gtk::manage( new Gtk::Image(Config::global.mail_new_buf->copy()));
-                col_image->show();
-                
-                col = Gtk::manage( new Gtk::TreeView::Column() ); 
-                col->pack_start(*crp, true);
-                col->set_widget(*col_image);
-                col->set_cell_data_func(*crp, sigc::mem_fun(*this, &MailBox::render_icon));
-                crp->property_xalign() = 0.5;
-                crp->property_yalign() = 0.5;
-                m_message_view->append_column(*col);
-            } else if(column.title == "ATTACH") {
+            if(column.title == "ATTACH") {
                 // attach col
                 crp = Gtk::manage(new Gtk::CellRendererPixbuf());
                 col_image = Gtk::manage( new Gtk::Image(Config::global.attachment_buf->copy()));
