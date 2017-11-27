@@ -30,8 +30,6 @@
 #include <gtkmm/main.h>
 #include <gtkmm/image.h>
 
-//#include <gtk-xmhtml/gtk-xmhtml.h>
-
 #include <string.h>
 #include <stdio.h>
 #include <time.h>

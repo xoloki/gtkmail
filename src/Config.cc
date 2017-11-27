@@ -179,6 +179,13 @@ namespace gtkmail {
         return int_value(m_node->get_attribute("message_pos"));
     }
 
+    std::vector<Config::MailBox::Column> Config::MailBox::get_message_cols() const {
+        std::vector<Column> cols =
+            { Column("READ", -1), Column("Subject", -1), Column("From", -1), Column("ATTACH", -1), Column("Size", -1), Column("Date", -1) };
+
+        return cols;
+    }
+    
     bool Config::MailBox::get_idle() const {
         return m_node->get_attribute("idle") == "true";
     }
@@ -245,6 +252,10 @@ namespace gtkmail {
         m_node->set_attribute("message_pos", string_value(t));
     }
 
+    void Config::MailBox::set_message_cols(const std::vector<Config::MailBox::Column>& cols) {
+        
+    }
+    
     xml::node::ptr Config::MailBox::get_node() {
         return m_node;
     }

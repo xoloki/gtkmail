@@ -96,6 +96,14 @@ namespace gtkmail {
 
         class MailBox {
         public:
+            struct Column {
+                Column(std::string t, int w)
+                    : title(t), width(w) {}
+                
+                std::string title;
+                int width = -1;
+            };
+
             MailBox();
             MailBox(std::string url,std::string name,std::string addr,std::string time);
             MailBox(xml::node::ptr node);
@@ -117,6 +125,7 @@ namespace gtkmail {
             int get_time() const;
             int get_folder_pos() const;
             int get_message_pos() const;
+            std::vector<Column> get_message_cols() const;
 
             void set_url(std::string url);
             void set_name(std::string s);
@@ -135,7 +144,8 @@ namespace gtkmail {
             void set_time(int t);
             void set_folder_pos(int t);
             void set_message_pos(int t);
-
+            void set_message_cols(const std::vector<Column>& cols);
+            
             xml::node::ptr get_node();
             const xml::node::ptr get_node() const;
             void set_node(xml::node::ptr node);

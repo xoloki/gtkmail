@@ -1812,8 +1812,18 @@ namespace gtkmail {
     void MailBox::set_col_pos() {
         Config::iterator i = Config::global.find(m_name);
         if(i != Config::global.end()) {
-            //i->set_message_pos(m_message_paned->get_position());
-            
+            std::vector<Config::MailBox::Column> cols;
+            int n = m_message_view->get_columns().size();
+            for(guint x = 0; x < n; x++){
+                Gtk::TreeView::Column* col = m_message_view->get_column(x);
+
+                if(col) {
+                    std::cout << "col[" << x << "]: " << col->get_title() << " width " << col->get_width() << std::endl;
+                    cols.push_back(Config::MailBox::Column(col->get_title(), col->get_width()));
+                }
+            } 
+
+            i->set_message_cols(cols);
         }
     }
 
