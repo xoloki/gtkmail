@@ -187,6 +187,9 @@ namespace gtkmail {
         } 
 
         std::string message_cols = m_node->get_attribute("message_cols");
+
+        //std::cerr << "Read message_cols attribute: " << message_cols << std::endl;
+        
         auto tcols = jlib::util::tokenize(message_cols, ",");
         for(auto tc : tcols) {
             auto tcs = jlib::util::tokenize(tc, ":");
@@ -272,6 +275,7 @@ namespace gtkmail {
             if((i+1) < cols.size())
                 o << ",";
         }
+        //std::cerr << "Writing message_cols attribute: " << o.str() << std::endl;
         m_node->set_attribute("message_cols", o.str());
     }
     

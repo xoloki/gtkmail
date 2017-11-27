@@ -192,15 +192,21 @@ namespace gtkmail {
                 crt = Gtk::manage(new Gtk::CellRendererText());
                 col = Gtk::manage(new Gtk::TreeView::Column("Date", *crt)); 
                 col->set_cell_data_func(*crt, sigc::mem_fun(*this, &MailBox::render_date));
+                col->set_sizing(Gtk::TREE_VIEW_COLUMN_FIXED);
+                col->set_fixed_width(column.width);
                 col->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &MailBox::on_column_clicked), "date"));
+
                 m_message_view->append_column(*col);
             } else if(column.title == "Size") {
                 // size col
                 crt = Gtk::manage(new Gtk::CellRendererText());
                 crt->property_xalign() = 1.0;
                 col = Gtk::manage(new Gtk::TreeView::Column("Size", *crt)); 
-                col->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &MailBox::on_column_clicked), "size"));
                 col->set_cell_data_func(*crt, sigc::mem_fun(*this, &MailBox::render_size));
+                col->set_sizing(Gtk::TREE_VIEW_COLUMN_FIXED);
+                col->set_fixed_width(column.width);
+                col->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &MailBox::on_column_clicked), "size"));
+
                 m_message_view->append_column(*col);
             } else if(column.title == "From") {
                 // from col
@@ -209,7 +215,9 @@ namespace gtkmail {
                 col->pack_start(*crt, false);
                 col->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &MailBox::on_column_clicked), "from"));
                 col->set_cell_data_func(*crt, sigc::mem_fun(*this, &MailBox::render_from));
-                //col->property_fixed_width() = 200;
+                col->set_sizing(Gtk::TREE_VIEW_COLUMN_FIXED);
+                col->set_fixed_width(column.width);
+
                 m_message_view->append_column(*col);
             } else if(column.title == "Subject") {
                 // subject col
@@ -218,6 +226,9 @@ namespace gtkmail {
                 col->pack_start(*crt, false);
                 col->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &MailBox::on_column_clicked), "subject"));
                 col->set_cell_data_func(*crt, sigc::mem_fun(*this, &MailBox::render_subject));
+                col->set_sizing(Gtk::TREE_VIEW_COLUMN_FIXED);
+                col->set_fixed_width(column.width);
+
                 m_message_view->append_column(*col);
             }                 
         }
