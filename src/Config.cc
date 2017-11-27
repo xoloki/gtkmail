@@ -180,8 +180,21 @@ namespace gtkmail {
     }
 
     std::vector<Config::MailBox::Column> Config::MailBox::get_message_cols() const {
-        std::vector<Column> cols =
-            { Column("READ", -1), Column("Subject", -1), Column("From", -1), Column("ATTACH", -1), Column("Size", -1), Column("Date", -1) };
+        std::vector<Column> cols;
+        
+        if(m_node->get_attribute("message_cols") == "") {
+            m_node->set_attribute("message_cols", "READ:-1,Subject:-1,From:-1,Size:-1,ATTACH:-1,Date:-1");
+        } 
+
+        std::string message_cols = m_node->get_attribute("message_cols");
+        auto tcols = jlib::util::tokenize(message_cols, ",");
+        for(auto tc : tcols) {
+            auto tcs = jlib::util::tokenize(tc, ":");
+            std::string title = tcs[0];
+            int width = jlib::util::int_value(tcs[1]);
+
+            cols.push_back(Column(title, width));
+        }
 
         return cols;
     }
