@@ -57,6 +57,8 @@ namespace gtkmail {
         void set_subject(std::string s);
 
     protected:
+        static gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer data);
+
         void build_tree();
         void build_tree(Gtk::TreeModel::Row& row, jlib::net::Email& e);
         //void delete_tree(Gtk::CTree_Helpers::RowList& rows);

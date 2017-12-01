@@ -54,6 +54,8 @@ namespace gtkmail {
 
         void append(Preflet* p);
 
+        static gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer data);
+        
         Gtk::Button* m_apply;
         Gtk::Button* m_cancel;
 

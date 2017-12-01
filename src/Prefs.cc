@@ -73,6 +73,8 @@ namespace gtkmail {
         m_apply->signal_clicked().connect(sigc::mem_fun(*this, &Prefs::on_apply));
         m_cancel->signal_clicked().connect(sigc::mem_fun(*this, &Prefs::on_cancel));
 
+        g_signal_connect(G_OBJECT(gobj()), "key_press_event", G_CALLBACK(on_key_press), (gpointer)this);
+        
         append(new UIPreflet());
         append(new MailBoxPreflet());
         append(new AddressBookPreflet());
@@ -90,6 +92,15 @@ namespace gtkmail {
         }
     }
 
+gboolean Prefs::on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer data) {
+    if (event->keyval == GDK_KEY_Escape) {
+        Prefs* that = (Prefs*)data;
+        that->destroy_();
+    }
+}
+    
+
+    
     bool Prefs::on_frame(GdkEvent* e) {
         std::cout << "Prefs::on_frame(" << e->type << ")" << std::endl;
         return true;
