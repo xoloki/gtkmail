@@ -100,7 +100,7 @@ namespace gtkmail {
         set_url(url);
         set_name(name);
         set_addr(addr);
-        set_time(int_value(time));
+        set_time(std::stoi(time));
 
         set_smtp_port(25);
         set_smtp_tls(false);
@@ -138,7 +138,7 @@ namespace gtkmail {
     }
 
     unsigned int Config::MailBox::get_smtp_port() const {
-        return jlib::util::int_value(m_node->get_attribute("smtp_port"));
+        return std::stoi(m_node->get_attribute("smtp_port"));
     }
 
     bool Config::MailBox::get_smtp_tls() const {
@@ -162,21 +162,21 @@ namespace gtkmail {
     }
 
     int Config::MailBox::get_time() const {
-        return int_value(m_node->get_attribute("time"));
+        return std::stoi(m_node->get_attribute("time"));
     }
     
     int Config::MailBox::get_folder_pos() const {
         if(m_node->get_attribute("folder_pos") == "") {
             m_node->set_attribute("folder_pos", "200");
         } 
-        return int_value(m_node->get_attribute("folder_pos"));
+        return std::stoi(m_node->get_attribute("folder_pos"));
     }
 
     int Config::MailBox::get_message_pos() const {
         if(m_node->get_attribute("message_pos") == "") {
             m_node->set_attribute("message_pos", "200");
         } 
-        return int_value(m_node->get_attribute("message_pos"));
+        return std::stoi(m_node->get_attribute("message_pos"));
     }
 
     std::vector<Config::MailBox::Column> Config::MailBox::get_message_cols() const {
@@ -194,7 +194,7 @@ namespace gtkmail {
         for(auto tc : tcols) {
             auto tcs = jlib::util::tokenize(tc, ":");
             std::string title = tcs[0];
-            int width = jlib::util::int_value(tcs[1]);
+            int width = std::stoi(tcs[1]);
 
             cols.push_back(Column(title, width));
         }
@@ -241,7 +241,7 @@ namespace gtkmail {
     }
 
     void Config::MailBox::set_smtp_port(unsigned int port) {
-        m_node->set_attribute("smtp_port", jlib::util::string_value(port));
+        m_node->set_attribute("smtp_port", std::to_string(port));
     }
 
     void Config::MailBox::set_smtp_tls(bool b) {
@@ -257,15 +257,15 @@ namespace gtkmail {
     }
 
     void Config::MailBox::set_time(int t) {
-        m_node->set_attribute("time", string_value(t));
+        m_node->set_attribute("time", std::to_string(t));
     }
 
     void Config::MailBox::set_folder_pos(int t) {
-        m_node->set_attribute("folder_pos", string_value(t));
+        m_node->set_attribute("folder_pos", std::to_string(t));
     }
 
     void Config::MailBox::set_message_pos(int t) {
-        m_node->set_attribute("message_pos", string_value(t));
+        m_node->set_attribute("message_pos", std::to_string(t));
     }
 
     void Config::MailBox::set_message_cols(const std::vector<Config::MailBox::Column>& cols) {
@@ -706,7 +706,7 @@ namespace gtkmail {
             s = "both_horiz";
             break;
         default:
-            throw bad_style("Unknown enumerated Gtk::ToolbarStyle value: " + string_value(static_cast<int>(style)));
+            throw bad_style("Unknown enumerated Gtk::ToolbarStyle value: " + std::to_string(static_cast<int>(style)));
         }
 
         set_pref("toolbar_style", s);

@@ -453,7 +453,7 @@ namespace gtkmail {
         }
         if(buf != "") {
             m_status->pop();
-            m_status->push(" Fetching from "+jlib::util::string_value(count)+" boxes");
+            m_status->push(" Fetching from "+std::to_string(count)+" boxes");
         }
         else {
             m_status->pop();
@@ -532,7 +532,7 @@ namespace gtkmail {
             MailBoxDruid druid(box->get_name(),
                                box->get_address(),
                                box->get_url(),
-                               jlib::util::string_value(box->get_time()));
+                               std::to_string(box->get_time()));
             druid.select_info_page();
             druid.run();
             if(druid.is_finished()) {

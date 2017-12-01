@@ -269,7 +269,7 @@ namespace gtkmail {
                 std::string qs = (proxy != "" ? ("proxy="+proxy) : "");
                 jlib::util::URL url(get_proto(), m_user->get_text(), m_pass->get_text(), 
                                     m_server->get_text(), 
-                                    jlib::util::string_value(static_cast<int>(m_port->get_value())),
+                                    std::to_string(static_cast<int>(m_port->get_value())),
                                     m_path->get_text(), qs);
 
                 m_box.set_url(url);
