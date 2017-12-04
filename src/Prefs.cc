@@ -96,7 +96,10 @@ gboolean Prefs::on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer dat
     if (event->keyval == GDK_KEY_Escape) {
         Prefs* that = (Prefs*)data;
         that->destroy_();
+        return TRUE;
     }
+
+    return FALSE;
 }
     
 
