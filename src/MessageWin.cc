@@ -169,7 +169,10 @@ gboolean MessageWin::on_key_press(GtkWidget *widget, GdkEventKey *event, gpointe
     if (event->keyval == GDK_KEY_Escape) {
         MessageWin* that = (MessageWin*)data;
         that->destroy_();
+        return TRUE;
     }
+
+    return FALSE;
 }
     
 /*
