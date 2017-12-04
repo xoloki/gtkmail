@@ -114,7 +114,8 @@ namespace gtkmail {
 
             std::string get_smtp() const;
             unsigned int get_smtp_port() const;
-            bool get_smtp_tls() const;
+            bool get_smtp_ssl() const;
+            bool get_smtp_starttls() const;
             bool get_smtp_auth() const;
             bool get_smtp_auth_same() const;
             std::string get_smtp_user() const;
@@ -133,7 +134,8 @@ namespace gtkmail {
 
             void set_smtp(std::string s);
             void set_smtp_port(unsigned int port);
-            void set_smtp_tls(bool b);
+            void set_smtp_ssl(bool b);
+            void set_smtp_starttls(bool b);
             void set_smtp_auth(bool b);
             void set_smtp_auth_same(bool b);
             void set_smtp_user(std::string s);

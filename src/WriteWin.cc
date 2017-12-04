@@ -524,20 +524,40 @@ namespace gtkmail {
             Config::iterator i = Config::global.find(m_box->get_name());
             sigc::slot5<void,std::string,std::string,std::string,std::string,unsigned int> s5;
 
-            if(i->get_smtp_auth()) {
-                std::string user, pass;
-
-                if(i->get_smtp_auth_same()) {
-                    util::URL url = i->get_url();
-                    user = url.get_user();
-                    pass = url.get_pass();
+            if(i->get_smtp_ssl()) {
+                if(i->get_smtp_auth()) {
+                    std::string user, pass;
+                    
+                    if(i->get_smtp_auth_same()) {
+                        util::URL url = i->get_url();
+                        user = url.get_user();
+                        pass = url.get_pass();
+                    } else {
+                        user = i->get_smtp_user();
+                        pass = i->get_smtp_pass();
+                    }
+                    s5 = sigc::bind(sigc::ptr_fun(&jlib::net::smtp::send_ssl_auth), user, pass);
                 } else {
-                    user = i->get_smtp_user();
-                    pass = i->get_smtp_pass();
+                    s5 = sigc::ptr_fun(&jlib::net::smtp::send_ssl);
                 }
-                s5 = sigc::bind(sigc::ptr_fun(&jlib::net::smtp::send_tls_auth), user, pass);
-            } else {
-                s5 = sigc::ptr_fun(i->get_smtp_tls() ? &jlib::net::smtp::send_tls : &jlib::net::smtp::send);
+            } else if(i->get_smtp_starttls()) {
+                if(i->get_smtp_auth()) {
+                    std::string user, pass;
+                    
+                    if(i->get_smtp_auth_same()) {
+                        util::URL url = i->get_url();
+                        user = url.get_user();
+                        pass = url.get_pass();
+                    } else {
+                        user = i->get_smtp_user();
+                        pass = i->get_smtp_pass();
+                    }
+                    s5 = sigc::bind(sigc::ptr_fun(&jlib::net::smtp::send_tls_auth), user, pass);
+                } else {
+                    s5 = sigc::ptr_fun(&jlib::net::smtp::send_tls);
+                }
+            } else {                
+                s5 = sigc::ptr_fun(&jlib::net::smtp::send);
             }
             
             sigc::slot3<void,std::string,std::string,std::string> s3;

@@ -41,7 +41,7 @@ namespace gtkmail {
     {
         Gtk::Table* general_table = Gtk::manage(new Gtk::Table(2, 2));
         m_account_table = Gtk::manage(new Gtk::Table(2, 2));
-        Gtk::Table* server_table = Gtk::manage(new Gtk::Table(14, 2));
+        Gtk::Table* server_table = Gtk::manage(new Gtk::Table(15, 2));
         Gtk::Label* label;
 
         m_name = Gtk::manage(new Gtk::Entry());
@@ -65,7 +65,8 @@ namespace gtkmail {
         m_time = Gtk::manage(new Gtk::SpinButton(*Gtk::manage(new Gtk::Adjustment(60000, 1000, 1000000000, 10000))));
         m_smtp = Gtk::manage(new Gtk::Entry());
         m_smtp_port = Gtk::manage(new Gtk::SpinButton(*Gtk::manage(new Gtk::Adjustment(0, 0, 65535))));
-        m_smtp_tls = Gtk::manage(new Gtk::CheckButton("Use TLSv1"));
+        m_smtp_ssl = Gtk::manage(new Gtk::CheckButton("Use SMTP over SSL"));
+        m_smtp_starttls = Gtk::manage(new Gtk::CheckButton("Use SMTP STARTTLS"));
         m_smtp_auth = Gtk::manage(new Gtk::CheckButton("Use SMTP Auth"));
         m_smtp_auth_same = Gtk::manage(new Gtk::CheckButton("Use same credentials for SMTP"));
         m_smtp_user = Gtk::manage(new Gtk::Entry());
@@ -87,7 +88,8 @@ namespace gtkmail {
         m_time->show();
         m_smtp->show();
         m_smtp_port->show();
-        m_smtp_tls->show();
+        m_smtp_ssl->show();
+        m_smtp_starttls->show();
         m_smtp_auth->show();
         m_proxy->show();
 
@@ -163,27 +165,28 @@ namespace gtkmail {
         server_table->attach(*label,       0, 1, 7, 8, Gtk::SHRINK|Gtk::FILL);
         server_table->attach(*m_smtp_port, 1, 2, 7, 8);
 
-        server_table->attach(*m_smtp_tls,       1, 2, 8, 9);
-        server_table->attach(*m_smtp_auth,      1, 2, 9, 10);
-        server_table->attach(*m_smtp_auth_same, 1, 2, 10, 11);
+        server_table->attach(*m_smtp_ssl,       1, 2, 8, 9);
+        server_table->attach(*m_smtp_starttls,  1, 2, 9, 10);
+        server_table->attach(*m_smtp_auth,      1, 2, 10, 11);
+        server_table->attach(*m_smtp_auth_same, 1, 2, 11, 12);
 
         m_smtp_user_label = Gtk::manage(new Gtk::Label("SMTP User"));
         //m_smtp_user_label->show();
         m_smtp_user_label->set_alignment(1, 0.5);
-        server_table->attach(*m_smtp_user_label, 0, 1, 11, 12, Gtk::SHRINK|Gtk::FILL);
-        server_table->attach(*m_smtp_user,       1, 2, 11, 12);
+        server_table->attach(*m_smtp_user_label, 0, 1, 12, 13, Gtk::SHRINK|Gtk::FILL);
+        server_table->attach(*m_smtp_user,       1, 2, 12, 13);
 
         m_smtp_pass_label = Gtk::manage(new Gtk::Label("SMTP Pass"));
         //m_smtp_pass_label->show();
         m_smtp_pass_label->set_alignment(1, 0.5);
-        server_table->attach(*m_smtp_pass_label, 0, 1, 12, 13, Gtk::SHRINK|Gtk::FILL);
-        server_table->attach(*m_smtp_pass,       1, 2, 12, 13);
+        server_table->attach(*m_smtp_pass_label, 0, 1, 13, 14, Gtk::SHRINK|Gtk::FILL);
+        server_table->attach(*m_smtp_pass,       1, 2, 13, 14);
 
         m_proxy_label = Gtk::manage(new Gtk::Label("HTTP Proxy"));
         m_proxy_label->show();
         m_proxy_label->set_alignment(1, 0.5);
-        server_table->attach(*m_proxy_label, 0, 1, 13, 14, Gtk::SHRINK|Gtk::FILL);
-        server_table->attach(*m_proxy,       1, 2, 13, 14);
+        server_table->attach(*m_proxy_label, 0, 1, 14, 15, Gtk::SHRINK|Gtk::FILL);
+        server_table->attach(*m_proxy,       1, 2, 14, 15);
 
         general_table->set_spacings(5);
         m_account_table->set_spacings(5);
@@ -226,7 +229,8 @@ namespace gtkmail {
 
         m_smtp->set_text(m_box.get_smtp());
         m_smtp_port->set_value(m_box.get_smtp_port());
-        m_smtp_tls->set_active(m_box.get_smtp_tls());
+        m_smtp_ssl->set_active(m_box.get_smtp_ssl());
+        m_smtp_starttls->set_active(m_box.get_smtp_starttls());
         m_smtp_auth->set_active(m_box.get_smtp_auth());
         m_smtp_auth_same->set_active(m_box.get_smtp_auth_same());
         m_smtp_user->set_text(m_box.get_smtp_user());
@@ -283,7 +287,8 @@ namespace gtkmail {
             m_box.set_smtp_user(m_smtp_user->get_text());
             m_box.set_smtp_pass(m_smtp_pass->get_text());
             m_box.set_smtp_port(m_smtp_port->get_value());
-            m_box.set_smtp_tls(m_smtp_tls->get_active());
+            m_box.set_smtp_ssl(m_smtp_ssl->get_active());
+            m_box.set_smtp_starttls(m_smtp_starttls->get_active());
             m_box.set_smtp_auth(m_smtp_auth->get_active());
             m_box.set_smtp_auth_same(m_smtp_auth_same->get_active());
 

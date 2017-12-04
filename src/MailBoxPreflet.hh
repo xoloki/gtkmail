@@ -70,7 +70,8 @@ namespace gtkmail {
         Gtk::Entry* m_path;
         Gtk::Entry* m_smtp;
         Gtk::SpinButton* m_smtp_port;
-        Gtk::CheckButton* m_smtp_tls;
+        Gtk::CheckButton* m_smtp_ssl;
+        Gtk::CheckButton* m_smtp_starttls;
         Gtk::CheckButton* m_smtp_auth;
         Gtk::CheckButton* m_smtp_auth_same;
         Gtk::Entry* m_smtp_user;

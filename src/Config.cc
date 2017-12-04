@@ -86,7 +86,8 @@ namespace gtkmail {
         m_node->set_attribute("name", os.str());
 
         set_smtp_port(25);
-        set_smtp_tls(false);
+        set_smtp_ssl(false);
+        set_smtp_starttls(false);
         set_smtp_auth(false);
         set_smtp_auth_same(true);
 
@@ -103,7 +104,8 @@ namespace gtkmail {
         set_time(std::stoi(time));
 
         set_smtp_port(25);
-        set_smtp_tls(false);
+        set_smtp_ssl(false);
+        set_smtp_starttls(false);
         set_smtp_auth(false);
         set_smtp_auth_same(true);
 
@@ -141,8 +143,12 @@ namespace gtkmail {
         return std::stoi(m_node->get_attribute("smtp_port"));
     }
 
-    bool Config::MailBox::get_smtp_tls() const {
-        return m_node->get_attribute("smtp_tls") == "true";
+    bool Config::MailBox::get_smtp_ssl() const {
+        return m_node->get_attribute("smtp_ssl") == "true";
+    }
+
+    bool Config::MailBox::get_smtp_starttls() const {
+        return m_node->get_attribute("smtp_starttls") == "true";
     }
 
     bool Config::MailBox::get_smtp_auth() const {
@@ -244,8 +250,12 @@ namespace gtkmail {
         m_node->set_attribute("smtp_port", std::to_string(port));
     }
 
-    void Config::MailBox::set_smtp_tls(bool b) {
-        m_node->set_attribute("smtp_tls", b ? "true" : "false");
+    void Config::MailBox::set_smtp_ssl(bool b) {
+        m_node->set_attribute("smtp_ssl", b ? "true" : "false");
+    }
+
+    void Config::MailBox::set_smtp_starttls(bool b) {
+        m_node->set_attribute("smtp_starttls", b ? "true" : "false");
     }
 
     void Config::MailBox::set_smtp_auth(bool b) {
@@ -299,7 +309,8 @@ namespace gtkmail {
         set_smtp_port(box.get_smtp_port());
         set_smtp_user(box.get_smtp_user());
         set_smtp_pass(box.get_smtp_pass());
-        set_smtp_tls(box.get_smtp_tls());
+        set_smtp_ssl(box.get_smtp_ssl());
+        set_smtp_starttls(box.get_smtp_starttls());
         set_smtp_auth(box.get_smtp_auth());
         set_smtp_auth_same(box.get_smtp_auth_same());
         set_time(box.get_time());
