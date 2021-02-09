@@ -637,7 +637,7 @@ namespace gtkmail {
                 std::map<std::string,std::string>::iterator p;
                 for(p = qsmap.begin();p!=qsmap.end();p++) {
                     if(jlib::util::lower(p->first) == "subject") {
-                        subject = jlib::crypt::uri::decode(p->second);
+                        subject = jlib::util::uri::decode(p->second);
                     }
                 }
                 

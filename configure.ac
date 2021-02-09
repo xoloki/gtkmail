@@ -33,7 +33,7 @@ AC_LANG(C++)
 AC_FUNC_ERROR_AT_LINE
 AC_CHECK_FUNCS([mkdir mkfifo select strerror])
 
-PKG_CHECK_MODULES(ALL, jlib-1.2 >= 1.2 gtkmm-2.4 >= 2.10.0 webkit-1.0 >= 1.1.12, CXXFLAGS="$CXXFLAGS $ALL_CFLAGS";LIBS="$LIBS $ALL_LIBS", AC_MSG_ERROR(you need all of these))
+PKG_CHECK_MODULES(ALL, jlib-1.2 >= 1.2 gtkmm-2.4 >= 2.10.0 webkit-1.0 >= 1.1.12 popt >= 1.0, CXXFLAGS="$CXXFLAGS $ALL_CFLAGS";LIBS="$LIBS $ALL_LIBS", AC_MSG_ERROR(you need all of these))
 
 AC_MSG_CHECKING([if webkit gtk+ headers can be included from C++])
 AC_TRY_COMPILE(
