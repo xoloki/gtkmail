@@ -26,6 +26,7 @@
 #include "ProtocolHandlerMap.hh"
 #include "Dialog.hh"
 #include "Prefs.hh"
+#include "MailBoxPreflet.hh"
 //#include "MailBoxDruid.hh"
 
 #ifdef HAVE_CONFIG_H
@@ -101,7 +102,11 @@ namespace gtkmail {
         m_vbox->pack_start(*m_boxes, true, true, 0);
         m_vbox->pack_end(*m_status, false, false, 0);
         add(*m_vbox);
-
+        /*
+        Config::MailBox dd("simap://dragon@dancingdragon.net:993/INBOX", "dancingdragon", "Joey Yandle <dragon@dancingdragon.net>", "-1");
+        Config::global.push_back(dd);
+        add_box(dd);
+        */
         show_all();
     }
 
@@ -136,6 +141,10 @@ namespace gtkmail {
             "    </menu>"
             "    <menu action='Settings'>"
             "      <menuitem action='Prefs'/>"
+            "      <menuitem action='MailBox'/>"
+            "      <menuitem action='Interface'/>"
+            "      <menuitem action='Address'/>"
+            "      <menuitem action='Protocol'/>"
             "    </menu>"
             "    <menu action='View'>"
             "      <menuitem action='DisplayImages'/>"
@@ -191,6 +200,10 @@ namespace gtkmail {
 
         m_actions->add(Gtk::Action::create("Settings", "_Settings"));
         m_actions->add(Gtk::Action::create("Prefs", Gtk::Stock::PREFERENCES), Gtk::AccelKey("<control>P"), sigc::mem_fun(this, &gtkmail::MainWin::on_preferences));
+        m_actions->add(Gtk::Action::create("MailBox", Gtk::Stock::PREFERENCES, "_MailBox"), sigc::mem_fun(this, &gtkmail::MainWin::on_prefs_mailbox));
+        m_actions->add(Gtk::Action::create("Interface", Gtk::Stock::PREFERENCES, "_Interface"), sigc::mem_fun(this, &gtkmail::MainWin::on_prefs_interface));
+        m_actions->add(Gtk::Action::create("Address", Gtk::Stock::PREFERENCES, "_Address"), sigc::mem_fun(this, &gtkmail::MainWin::on_prefs_address));
+        m_actions->add(Gtk::Action::create("Protocol", Gtk::Stock::PREFERENCES, "_Protocol"), sigc::mem_fun(this, &gtkmail::MainWin::on_prefs_protocol));
 
         m_actions->add(Gtk::Action::create("View", "_View"));
         m_actions->add(Gtk::Action::create("DisplayImages", Gtk::Stock::PREFERENCES, "_Display Images"), Gtk::AccelKey("<control>D"), sigc::mem_fun(this, &gtkmail::MainWin::on_view_display_images));
@@ -478,6 +491,25 @@ namespace gtkmail {
         prefs->signal_deleted.connect(sigc::mem_fun(*this, &MainWin::on_deleted));
 
         prefs->show_all();
+    }
+
+    void MainWin::on_prefs_mailbox() {
+        MailBoxPreflet* pref = new MailBoxPreflet();
+        pref->load();
+
+        Gtk::Window* win = new Gtk::Window();
+        win->add(*pref);
+
+        win->show_all();
+    }
+
+    void MainWin::on_prefs_interface() {
+    }
+
+    void MainWin::on_prefs_address() {
+    }
+
+    void MainWin::on_prefs_protocol() {
     }
 
     void MainWin::on_font() {

@@ -584,6 +584,7 @@ namespace gtkmail {
         dlg.show();
         if(dlg.run() == Gtk::RESPONSE_OK) {
             dlg.save();
+
             jlib::util::URL url;
 
             try {
@@ -594,6 +595,8 @@ namespace gtkmail {
                 row[m_cols.m_url] = url();
                 row[m_cols.m_edited] = true;
 
+                save();
+                
             } catch(Glib::Exception& e) {
                 display_exception(std::string("Unable to add new MailBox: ") + e.what(), &dlg);
             } catch(std::exception& e) {

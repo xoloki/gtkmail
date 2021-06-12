@@ -70,6 +70,10 @@ namespace gtkmail {
         int on_status();
 
         void on_preferences();
+        void on_prefs_mailbox();
+        void on_prefs_interface();
+        void on_prefs_address();
+        void on_prefs_protocol();
         void on_font();
         void on_reset();
 

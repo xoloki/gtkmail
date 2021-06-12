@@ -75,10 +75,12 @@ namespace gtkmail {
 
         g_signal_connect(G_OBJECT(gobj()), "key_press_event", G_CALLBACK(on_key_press), (gpointer)this);
         
-        append(new UIPreflet());
         append(new MailBoxPreflet());
+        append(new UIPreflet());
         append(new AddressBookPreflet());
         append(new ProtocolHandlerPreflet());
+
+        show_all();
     }
     
     Prefs::~Prefs() {
@@ -157,10 +159,12 @@ gboolean Prefs::on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer dat
     void Prefs::on_preflet_clicked(Preflet* p) {
         if(p != m_current) {
             if(m_current) {
+                m_current->hide();
                 m_hbox->remove(*m_current);
                 m_current = 0;
             }
 
+            p->show();
             m_hbox->pack_start(*p);
             m_current = p;
         }
