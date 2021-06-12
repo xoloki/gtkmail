@@ -140,7 +140,7 @@ namespace gtkmail {
             "      <menuitem action='UndeleteMessage'/>"
             "    </menu>"
             "    <menu action='Settings'>"
-            "      <menuitem action='Prefs'/>"
+            //"      <menuitem action='Prefs'/>"
             "      <menuitem action='MailBox'/>"
             "      <menuitem action='Interface'/>"
             "      <menuitem action='Address'/>"
@@ -199,7 +199,7 @@ namespace gtkmail {
                        sigc::bind(sigc::mem_fun(this, &gtkmail::MainWin::on_message), "Undelete"));
 
         m_actions->add(Gtk::Action::create("Settings", "_Settings"));
-        m_actions->add(Gtk::Action::create("Prefs", Gtk::Stock::PREFERENCES), Gtk::AccelKey("<control>P"), sigc::mem_fun(this, &gtkmail::MainWin::on_preferences));
+        //m_actions->add(Gtk::Action::create("Prefs", Gtk::Stock::PREFERENCES), Gtk::AccelKey("<control>P"), sigc::mem_fun(this, &gtkmail::MainWin::on_preferences));
         m_actions->add(Gtk::Action::create("MailBox", Gtk::Stock::PREFERENCES, "_MailBox"), sigc::mem_fun(this, &gtkmail::MainWin::on_prefs_mailbox));
         m_actions->add(Gtk::Action::create("Interface", Gtk::Stock::PREFERENCES, "_Interface"), sigc::mem_fun(this, &gtkmail::MainWin::on_prefs_interface));
         m_actions->add(Gtk::Action::create("Address", Gtk::Stock::PREFERENCES, "_Address"), sigc::mem_fun(this, &gtkmail::MainWin::on_prefs_address));
